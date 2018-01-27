@@ -1,0 +1,78 @@
+﻿<Window x:Class="simpleCAD.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:simpleCAD"
+        xmlns:geometry="clr-namespace:simpleCAD.Geometry"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel
+			Grid.Row="0"
+			Orientation="Vertical">
+            <Button Content="OK" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            <Button Content="OK2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        </StackPanel>
+
+        <local:DrawingHost
+			x:Name="DH"
+			Grid.Row="0"
+			VerticalAlignment="Stretch"
+			HorizontalAlignment="Stretch"/>
+
+
+        <ListBox
+			Grid.Row="0"
+			VerticalAlignment="Top"
+			HorizontalAlignment="Right"
+			Grid.IsSharedSizeScope="True"
+			Background="Aqua"
+			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=DH}">
+            <ListBox.Resources>
+                <DataTemplate DataType="{x:Type geometry:PropertyViewModel}">
+                    <TextBox
+						IsReadOnly="{Binding IsReadOnly}"
+						Text="{Binding Value, Mode=TwoWay}"/>
+                </DataTemplate>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Border>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" SharedSizeGroup="PropertyName" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" SharedSizeGroup="PropertyValue" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+								Margin="1"
+								Grid.Column="0"
+								Text="{Binding Name}" />
+                            <GridSplitter
+								Grid.Column="1"
+								Width="1"
+								Background="Black"
+								VerticalAlignment="Stretch" />
+                            <ContentPresenter
+								Margin="1"
+								Grid.Column="2"
+								Content="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <CheckBox
+			Grid.Row="1"
+			Content="Add line"
+			IsChecked="{Binding IsDrawingLine, ElementName=DH}"/>
+    </Grid>
+</Window>
