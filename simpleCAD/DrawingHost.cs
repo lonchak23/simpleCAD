@@ -4,12 +4,15 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using simpleCAD.Geometry;
+using System.Diagnostics;
 
 namespace simpleCAD
 {
     public class DrawingHost : FrameworkElement
 	{
-		static DrawingHost()
+        #region Constructors
+
+        static DrawingHost()
 		{
 			DrawingHost.AxisBrushProperty = DependencyProperty.Register(
 				"AxisBrush",
@@ -47,13 +50,29 @@ namespace simpleCAD
 			OnRedrawGripsHandler += OnRedrawGrips;
 		}
 
-		#region Properties
+        #endregion
 
-		private List<cadGeometry> m_geometries = new List<cadGeometry>();
+        #region Properties
+
+        private List<cadGeometry> m_geometries = new List<cadGeometry>();
 		private List<cadGrip> m_grips = new List<cadGrip>();
 		private cadGrip m_gripToMove = null;
+        /// <summary>
+        /// Point of mouse middle button pressing.
+        /// Need for temporary offset calculation.
+        /// </summary>
 		private Point m_MiddleBtnPressed_Point = new Point();
+        /// <summary>
+        /// Offset of left top corner of plot from (0;0) point.
+        /// </summary>
 		private Vector m_OffsetVector = new Vector(0.0, 0.0);
+        /// <summary>
+        /// Temporary offset vector.
+        /// It shows offset when mouse middle button is pressed and mouse is moved.
+        /// In this case dont need to change m_OffsetVector because when mouse will move again
+        /// (with middle button pressed) need to deduct "old" temp offset and add "new" temp offset.
+        /// But we cant calculate "old" temp offset because mouse position is new.
+        /// </summary>
 		private Vector m_TempOffsetVector = new Vector(0.0, 0.0);
 
 		//=============================================================================
@@ -139,16 +158,219 @@ namespace simpleCAD
 		//=============================================================================
 		private static event EventHandler OnRedrawGripsHandler;
 
-		#endregion
+        #endregion
 
-		//=============================================================================
-		public static void RedrawGrips()
+        #region Overrides
+
+        //=============================================================================
+        protected override int VisualChildrenCount
+        {
+            get { return m_geometries.Count + m_grips.Count; }
+        }
+
+        //=============================================================================
+        protected override Visual GetVisualChild(int index)
+        {
+            if (index >= 0 && index < m_geometries.Count)
+                return m_geometries[index];
+
+            int offset = m_geometries.Count;
+            if (index >= offset && index - offset < m_grips.Count)
+                return m_grips[index - offset];
+
+            return null;
+        }
+
+        //=============================================================================
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            Point pt = hitTestParameters.HitPoint;
+
+            // Perform custom actions during the hit test processing,
+            // which may include verifying that the point actually
+            // falls within the rendered content of the visual.
+
+            // Return hit on bounding rectangle of visual object.
+            return new PointHitTestResult(this, pt);
+        }
+
+        //=============================================================================
+        protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            Point globalPnt = _GetGlobalPoint(e);
+
+            if (IsDrawingLine)
+            {
+                cadGeometry currentGeom = null;
+                if (m_geometries.Count > 0)
+                {
+                    cadGeometry lastGeom = m_geometries[m_geometries.Count - 1];
+                    if (!lastGeom.IsInitialized())
+                        currentGeom = lastGeom as cadLine;
+                }
+
+                // create new one
+                if (currentGeom == null)
+                {
+                    if (IsDrawingLine)
+                        currentGeom = new cadLine(this);
+
+                    m_geometries.Add(currentGeom);
+                    AddVisualChild(currentGeom);
+                    AddLogicalChild(currentGeom);
+                }
+
+                if (currentGeom != null)
+                    currentGeom.SetPoint(globalPnt, true);
+            }
+            else
+            {
+                Point localPnt = _GetLocalPoint(e);
+                HitTestResult res = VisualTreeHelper.HitTest(this, localPnt);
+
+                if (m_gripToMove != null)
+                {
+                    m_gripToMove = null;
+                    return;
+                }
+
+                // moving grip
+                cadGrip _grip = res.VisualHit as cadGrip;
+                if (_grip != null)
+                {
+                    m_gripToMove = _grip;
+                    return;
+                }
+
+                SelectedGeometry = res.VisualHit as cadGeometry;
+            }
+        }
+
+        //=============================================================================
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+
+            // move plot
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
+                Point pnt = _GetLocalPoint(e);
+                m_TempOffsetVector = (m_MiddleBtnPressed_Point - pnt);
+                UpdateGeometry();
+                UpdateGrips();
+                return;
+            }
+
+            if (m_geometries.Count > 0)
+            {
+                Point globalPnt = _GetGlobalPoint(e);
+
+                cadGeometry lastGeom = m_geometries[m_geometries.Count - 1];
+                if (lastGeom.IsInitialized())
+                {
+                    if (m_gripToMove != null)
+                        m_gripToMove.Move(globalPnt);
+                }
+                else
+                    lastGeom.SetPoint(globalPnt, false);
+            }
+        }
+
+        //=============================================================================
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+
+            //
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+                m_MiddleBtnPressed_Point = _GetLocalPoint(e);
+        }
+
+        //=============================================================================
+        protected override void OnMouseUp(MouseButtonEventArgs e)
+        {
+            base.OnMouseUp(e);
+
+            //
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
+            {
+                m_OffsetVector = m_OffsetVector + m_TempOffsetVector;
+                m_TempOffsetVector.X = 0.0;
+                m_TempOffsetVector.Y = 0.0;
+            }
+        }
+
+        //=============================================================================
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            Point globalPnt_UnderMouse = _GetGlobalPoint(e);
+            Point localPnt_UnderMouse = _GetLocalPoint(e);
+
+            //
+            // Mouse wheel was spinned.
+            // Calculate new scale.
+            double currentScale = Scale;
+            //
+            // Delta < 0 - scrolling to user
+            // Delta > 0 - from user
+            if (e.Delta < 0)
+            {
+                // zoom in
+                if (currentScale >= m_ScaleList[m_ScaleList.Count - 1])
+                    return;
+
+                foreach (double rVal in m_ScaleList)
+                {
+                    if (currentScale < rVal)
+                    {
+                        Scale = rVal;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // zoom out
+                if (currentScale <= m_ScaleList[0])
+                    return;
+
+                int iIndex = m_ScaleList.Count - 1;
+                while (iIndex >= 0)
+                {
+                    if (currentScale > m_ScaleList[iIndex])
+                    {
+                        Scale = m_ScaleList[iIndex];
+                        break;
+                    }
+                    --iIndex;
+                }
+            }
+
+            //
+            // Need to save cursor position - cursor should been placed over same point in global coordiantes.
+            globalPnt_UnderMouse.X *= Scale;
+            globalPnt_UnderMouse.Y *= Scale;
+            m_OffsetVector = globalPnt_UnderMouse - localPnt_UnderMouse;
+            m_TempOffsetVector.X = 0;
+            m_TempOffsetVector.Y = 0;
+
+            UpdateGeometry();
+            UpdateGrips();
+        }
+
+        #endregion
+
+        //=============================================================================
+        public static void RedrawGrips()
 		{
 			EventHandler handler = OnRedrawGripsHandler;
 			if(handler != null)
 				handler(null, EventArgs.Empty);
 		}
-
 		private void OnRedrawGrips(object sender, EventArgs e)
 		{
 			if(m_grips == null)
@@ -156,215 +378,6 @@ namespace simpleCAD
 
 			foreach (cadGrip g in m_grips)
 				g.Update();
-		}
-
-		//=============================================================================
-		protected override int VisualChildrenCount
-		{
-			get { return m_geometries.Count + m_grips.Count; }
-		}
-
-		//=============================================================================
-		protected override Visual GetVisualChild(int index)
-		{
-			if (index >= 0 && index < m_geometries.Count)
-				return m_geometries[index];
-
-			int offset = m_geometries.Count;
-			if (index >= offset && index - offset < m_grips.Count)
-				return m_grips[index - offset];
-
-			return null;
-		}
-
-		//=============================================================================
-		protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
-		{
-			Point pt = hitTestParameters.HitPoint;
-
-			// Perform custom actions during the hit test processing,
-			// which may include verifying that the point actually
-			// falls within the rendered content of the visual.
-
-			// Return hit on bounding rectangle of visual object.
-			return new PointHitTestResult(this, pt);
-		}
-
-		//=============================================================================
-		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
-		{
-			base.OnMouseLeftButtonDown(e);
-
-			Point globalPnt = _GetGlobalPoint(e);
-
-			if (IsDrawingLine)
-			{
-				cadGeometry currentGeom = null;
-				if (m_geometries.Count > 0)
-				{
-					cadGeometry lastGeom = m_geometries[m_geometries.Count - 1];
-					if (!lastGeom.IsInitialized())
-						currentGeom = lastGeom as cadLine;
-				}
-
-				// create new one
-				if (currentGeom == null)
-				{
-					if (IsDrawingLine)
-						currentGeom = new cadLine(this);
-
-					m_geometries.Add(currentGeom);
-					AddVisualChild(currentGeom);
-					AddLogicalChild(currentGeom);
-				}
-
-				if (currentGeom != null)
-					currentGeom.SetPoint(globalPnt, true);
-			}
-			else
-			{
-				Point localPnt = _GetLocalPoint(e);
-				HitTestResult res = VisualTreeHelper.HitTest(this, localPnt);
-
-				if (m_gripToMove != null)
-				{
-					m_gripToMove = null;
-					return;
-				}
-
-				// moving grip
-				cadGrip _grip = res.VisualHit as cadGrip;
-				if (_grip != null)
-				{
-					m_gripToMove = _grip;
-					return;
-				}
-
-				SelectedGeometry = res.VisualHit as cadGeometry;
-			}
-		}
-
-		//=============================================================================
-		protected override void OnMouseMove(MouseEventArgs e)
-		{
-			base.OnMouseMove(e);
-
-			// move plot
-			if (e.MiddleButton == MouseButtonState.Pressed)
-			{
-				Point pnt = _GetLocalPoint(e);
-				m_TempOffsetVector = (m_MiddleBtnPressed_Point - pnt)/Scale;//pnt - m_MiddleBtnPressed_Point;
-				UpdateGeometry();
-				UpdateGrips();
-				return;
-			}
-
-			if (m_geometries.Count > 0)
-			{
-				Point globalPnt = _GetGlobalPoint(e);
-
-				cadGeometry lastGeom = m_geometries[m_geometries.Count - 1];
-				if (lastGeom.IsInitialized())
-				{
-					if (m_gripToMove != null)
-						m_gripToMove.Move(globalPnt);
-				}
-				else
-					lastGeom.SetPoint(globalPnt, false);
-			}
-		}
-
-		//=============================================================================
-		protected override void OnMouseDown(MouseButtonEventArgs e)
-		{
-			base.OnMouseDown(e);
-
-			//
-			if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
-				m_MiddleBtnPressed_Point = _GetLocalPoint(e);
-		}
-
-		//=============================================================================
-		protected override void OnMouseUp(MouseButtonEventArgs e)
-		{
-			base.OnMouseUp(e);
-
-			//
-			if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
-			{
-				m_OffsetVector = m_OffsetVector + m_TempOffsetVector;
-
-				m_TempOffsetVector.X = 0.0;
-				m_TempOffsetVector.Y = 0.0;
-			}
-		}
-
-		//=============================================================================
-		protected override void OnMouseWheel(MouseWheelEventArgs e)
-		{
-			base.OnMouseWheel(e);
-
-			Point globalPnt_UnderMouse = _GetGlobalPoint(e);
-			Point localPnt_UnderMouse = _GetLocalPoint(e);
-
-			double currentScale = Scale;
-			//
-			// Delta < 0 - scrolling to user
-			// Delta > 0 - from user
-			if (e.Delta < 0)
-			{
-				// zoom in
-				if (currentScale >= m_ScaleList[m_ScaleList.Count - 1])
-					return;
-
-				foreach (double rVal in m_ScaleList)
-				{
-					if (currentScale < rVal)
-					{
-						Scale = rVal;
-						break;
-					}
-				}
-			}
-			else
-			{
-				// zoom out
-				if (currentScale <= m_ScaleList[0])
-					return;
-
-				int iIndex = m_ScaleList.Count-1;
-				while (iIndex >= 0)
-				{
-					if (currentScale > m_ScaleList[iIndex])
-					{
-						Scale = m_ScaleList[iIndex];
-						break;
-					}
-					--iIndex;
-				}
-			}
-
-			// Need to save cursor position - cursor should been placed over same point in global coordiantes.
-			// Imagine that cursor is over Local_PntA, his Global_PntA = (Local_PntA + offset)/Scale.
-			// After scaling we need to save point under cursor - Global_PntA. Other, plot will be jumping and
-			// when you will try to scale while dragging gripp Point, gripp point will move away from cursor.
-			//
-			// All we need is to change offset after scaling:
-			// offset = Global_PntA*Scale - Local_PntA
-			//
-			//localPnt_UnderMouse.X /= Scale;
-			//localPnt_UnderMouse.Y /= Scale;
-
-			//
-			//globalPnt_UnderMouse.X *= Scale;
-			//globalPnt_UnderMouse.Y *= Scale;
-			//m_OffsetVector = globalPnt_UnderMouse - localPnt_UnderMouse;
-
-			Point globalPnt_UnderMouse2 = _GetGlobalPoint(e);
-			m_OffsetVector += globalPnt_UnderMouse - globalPnt_UnderMouse2;
-
-			UpdateGeometry();
-			UpdateGrips();
 		}
 
 		//=============================================================================
@@ -460,12 +473,14 @@ namespace simpleCAD
 		{
 			return e.GetPosition(this);
 		}
-		//=============================================================================
 		public Point GetLocalPoint(Point globalPnt)
 		{
-			Point tempPnt = globalPnt - GetOffset();
+            Point tempPnt = globalPnt;
 			tempPnt.X = tempPnt.X*Scale;
 			tempPnt.Y = tempPnt.Y*Scale;
+
+            tempPnt -= GetOffset();
+
 			return tempPnt;
 		}
 	}
