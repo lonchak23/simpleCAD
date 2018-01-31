@@ -11,12 +11,14 @@ namespace simpleCAD.Geometry
 {
 	public class cadGrip : DrawingVisual
 	{
-		private cadGeometry m_owner = null;
+		private ICoordinateSystem m_cs = null;
+		private ICadGeometry m_owner = null;
 		private int m_gripIndex = -1;
 
 		//=============================================================================
-		public cadGrip(cadGeometry owner, int gripIndex)
+		public cadGrip(ICoordinateSystem cs, ICadGeometry owner, int gripIndex)
 		{
+			m_cs = cs;
 			m_owner = owner;
 			m_gripIndex = gripIndex;
 
@@ -26,11 +28,11 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		public Point GripLocalPoint()
 		{
-			if (m_owner != null && m_gripIndex >= 0)
+			if (m_cs != null && m_owner != null && m_gripIndex >= 0)
 			{
 				List<Point> pnts = m_owner.GetGripPoints();
 				if (pnts != null && m_gripIndex < pnts.Count)
-					return m_owner.GetLocalPoint(pnts[m_gripIndex]);
+					return m_cs.GetLocalPoint(pnts[m_gripIndex]);
 			}
 
 			return new Point();

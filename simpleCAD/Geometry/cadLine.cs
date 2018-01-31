@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace simpleCAD.Geometry
 {
-	internal class cadLine : cadGeometry
+	internal class cadLine : ICadGeometry
 	{
 		private Point m_FirstPnt = new Point();
 		private Point m_SecondPnt = new Point();
@@ -21,51 +21,65 @@ namespace simpleCAD.Geometry
 		private GeometryGripX_Property m_SecondPointX_Property = null;
 		private GeometryGripY_Property m_SecondPointY_Property = null;
 
-		public cadLine(DrawingHost owner)
-			: base(owner)
+		private Brush m_Color = Brushes.Black;
+		private double m_Thickness = 2.0;
+
+		public cadLine()
 		{
-			m_FirstPointX_Property = new GeometryGripX_Property("Start point X", this, 0);
-			m_FirstPointY_Property = new GeometryGripY_Property("Start point Y", this, 0);
-			m_SecondPointX_Property = new GeometryGripX_Property("End point X", this, 1);
-			m_SecondPointY_Property = new GeometryGripY_Property("End point Y", this, 1);
+			m_FirstPointX_Property = new GeometryGripX_Property(this, "Start point X", 0);
+			m_FirstPointY_Property = new GeometryGripY_Property(this, "Start point Y", 0);
+			m_SecondPointX_Property = new GeometryGripX_Property(this,"End point X", 1);
+			m_SecondPointY_Property = new GeometryGripY_Property(this, "End point Y", 1);
 		}
 
 		//=============================================================================
-		public override bool IsInitialized()
+		public bool IsPlaced
 		{
-			return m_bFirstPnt_Setted && m_bSecondPnt_Setted;
+			get
+			{
+				return m_bFirstPnt_Setted && m_bSecondPnt_Setted;
+			}
 		}
 
 		//=============================================================================
-		public override void SetPoint(Point pnt, bool bByClick)
+		public void OnMouseLeftButtonClick(Point globalPoint)
 		{
 			if (!m_bFirstPnt_Setted)
 			{
-				m_FirstPnt = pnt;
-				if(bByClick)
-					m_bFirstPnt_Setted = true;
+				m_FirstPnt = globalPoint;
+				m_bFirstPnt_Setted = true;
 			}
 			else if (!m_bSecondPnt_Setted)
 			{
-				m_SecondPnt = pnt;
-				if (bByClick)
-					m_bSecondPnt_Setted = true;
-				Draw();
+				m_SecondPnt = globalPoint;
+				m_bSecondPnt_Setted = true;
 			}
 		}
 
 		//=============================================================================
-		public override void Draw()
+		public void OnMouseMove(Point globalPoint)
 		{
-			using (DrawingContext dc = this.RenderOpen())
+			if (!m_bFirstPnt_Setted)
+				m_FirstPnt = globalPoint;
+			else if (!m_bSecondPnt_Setted)
+				m_SecondPnt = globalPoint;
+		}
+
+		//=============================================================================
+		public void Draw(ICoordinateSystem cs, DrawingContext dc)
+		{
+			if (cs != null && dc != null)
 			{
-				Pen _pen = new Pen(Color, Thickness);
-				dc.DrawLine(_pen, GetLocalPoint(m_FirstPnt), GetLocalPoint(m_SecondPnt));
+				Pen _pen = new Pen(m_Color, m_Thickness);
+				dc.DrawLine(_pen, cs.GetLocalPoint(m_FirstPnt), cs.GetLocalPoint(m_SecondPnt));
 			}
 		}
 
 		//=============================================================================
-		public override List<Point> GetGripPoints()
+		public DrawingVisual GetGeometryWrapper() { return null; }
+
+		//=============================================================================
+		public List<Point> GetGripPoints()
 		{
 			List<Point> grips = new List<Point>();
 			grips.Add(m_FirstPnt);
@@ -75,28 +89,18 @@ namespace simpleCAD.Geometry
 		}
 
 		//=============================================================================
-		public override bool SetGripPoint(int gripIndex, Point pnt)
+		public bool SetGripPoint(int gripIndex, Point pnt)
 		{
-			if (!IsInitialized())
+			if (!IsPlaced)
 				return false;
 
 			if (0 == gripIndex || 1 == gripIndex)
 			{
 
 				if (0 == gripIndex)
-				{
 					m_FirstPnt = pnt;
-					m_FirstPointX_Property.Update_Value();
-					m_FirstPointY_Property.Update_Value();
-				}
 				else
-				{
 					m_SecondPnt = pnt;
-					m_SecondPointX_Property.Update_Value();
-					m_SecondPointY_Property.Update_Value();
-				}
-
-				Draw();
 			}
 
 			return false;
@@ -104,14 +108,14 @@ namespace simpleCAD.Geometry
 
 		//=============================================================================
 		private List<PropertyViewModel> m_Properties = null;
-		public override List<PropertyViewModel> Properties
+		public List<PropertyViewModel> Properties
 		{
 			get
 			{
 				if (m_Properties == null)
 				{
 					m_Properties = new List<PropertyViewModel>();
-					m_Properties.Add(new GeometryType_Property("Line"));
+					m_Properties.Add(new GeometryType_Property(this, "Line"));
 
 					List<Point> grips = GetGripPoints();
 					if (grips.Count == 2)
@@ -123,11 +127,52 @@ namespace simpleCAD.Geometry
 						m_Properties.Add(m_SecondPointY_Property);
 					}
 
-					m_Properties.Add(m_ColorProperty);
-					m_Properties.Add(m_ThicknessProperty);
+					m_Properties.Add(new PropertyViewModel(this, Constants.SYSNAME_PROP_COLOR));
+					m_Properties.Add(new PropertyViewModel(this, Constants.SYSNAME_PROP_THICKNESS));
 				}
 				return m_Properties;
 			}
+		}
+
+		public object GetPropertyValue(string strPropSysName)
+		{
+			if (string.IsNullOrEmpty(strPropSysName))
+				return null;
+
+			if (Constants.SYSNAME_PROP_COLOR == strPropSysName)
+				return m_Color;
+			else if (Constants.SYSNAME_PROP_THICKNESS == strPropSysName)
+				return m_Thickness;
+
+			return null;
+		}
+
+		public bool SetPropertyValue(string strPropSysName, object propValue)
+		{
+			if (string.IsNullOrEmpty(strPropSysName))
+				return false;
+
+			if (Constants.SYSNAME_PROP_COLOR == strPropSysName)
+			{
+				try
+				{
+					BrushConverter bc = new BrushConverter();
+					m_Color = bc.ConvertFrom(propValue) as Brush;
+					return true;
+				}
+				catch { }
+			}
+			else if (Constants.SYSNAME_PROP_THICKNESS == strPropSysName)
+			{
+				try
+				{
+					m_Thickness = System.Convert.ToDouble(propValue);
+					return true;
+				}
+				catch { }
+			}
+
+			return false;
 		}
 	}
 }

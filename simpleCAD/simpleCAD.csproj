@@ -65,10 +65,14 @@
     </Compile>
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="DrawingHost.cs" />
+    <Compile Include="GeometryWraper.cs" />
     <Compile Include="Geometry\cadGeometry.cs" />
     <Compile Include="Geometry\cadGeometryProperties.cs" />
     <Compile Include="Geometry\cadGrip.cs" />
     <Compile Include="Geometry\cadLine.cs" />
+    <Compile Include="Geometry\Constants.cs" />
+    <Compile Include="Interfaces\ICadGeometry.cs" />
+    <Compile Include="Interfaces\ICoordinateSystem.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

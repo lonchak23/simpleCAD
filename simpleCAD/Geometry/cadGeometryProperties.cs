@@ -8,12 +8,16 @@ using System.Windows.Media;
 
 namespace simpleCAD.Geometry
 {
-	public abstract class PropertyViewModel : BaseViewModel
+	public class PropertyViewModel : BaseViewModel
 	{
-		protected PropertyViewModel(string name)
+		public PropertyViewModel(ICadGeometry owner, string name)
 		{
-			Name = name;
+			m_owner = owner;
+			m_Name = name;
 		}
+
+		//=============================================================================
+		protected ICadGeometry m_owner = null;
 
 		//=============================================================================
 		private string m_Name = string.Empty;
@@ -21,18 +25,26 @@ namespace simpleCAD.Geometry
 		public string Name
 		{
 			get { return m_Name; }
-			set
-			{
-				if (string.Compare(m_Name, value) != 0)
-				{
-					m_Name = value;
-					NotifyPropertyChanged(() => Name);
-				}
-			}
 		}
 
 		//=============================================================================
-		public abstract object Value { get; set; }
+		public virtual object Value
+		{
+			get
+			{
+				if (m_owner != null)
+					return m_owner.GetPropertyValue(m_Name);
+
+				return null;
+			}
+			set
+			{
+				if (m_owner != null)
+					m_owner.SetPropertyValue(m_Name, value);
+
+				NotifyPropertyChanged(() => Value);
+			}
+		}
 
 		//=============================================================================
 		protected bool m_IsReadOnly = false;
@@ -50,8 +62,8 @@ namespace simpleCAD.Geometry
 
 	public class GeometryType_Property : PropertyViewModel
 	{
-		public GeometryType_Property(string typeName)
-			: base("Geometry")
+		public GeometryType_Property(ICadGeometry owner, string typeName)
+			: base(owner, "GeometryType")
 		{
 			m_IsReadOnly = true;
 			m_GeometryType = typeName;
@@ -72,22 +84,20 @@ namespace simpleCAD.Geometry
 
 	public abstract class GeometryGrip_Property : PropertyViewModel
 	{
-		private cadGeometry m_geom = null;
 		private int m_index = -1;
 
-		protected GeometryGrip_Property(string name, cadGeometry geom, int index)
-			: base(name)
+		protected GeometryGrip_Property(ICadGeometry owner, string strSysName, int index)
+			: base(owner, strSysName)
 		{
-			m_geom = geom;
 			m_index = index;
 		}
 
 		//=============================================================================
 		protected Point GetPont()
 		{
-			if (m_geom != null && m_index >= 0)
+			if (m_owner != null && m_index >= 0)
 			{
-				List<Point> pnts = m_geom.GetGripPoints();
+				List<Point> pnts = m_owner.GetGripPoints();
 				if (pnts != null && m_index < pnts.Count)
 					return pnts[m_index];
 			}
@@ -99,8 +109,8 @@ namespace simpleCAD.Geometry
 		protected bool SetPoint(Point pnt)
 		{
 			bool result = false;
-			if (m_geom != null)
-				result = m_geom.SetGripPoint(m_index, pnt);
+			if (m_owner != null)
+				result = m_owner.SetGripPoint(m_index, pnt);
 
 			DrawingHost.RedrawGrips();
 
@@ -110,8 +120,8 @@ namespace simpleCAD.Geometry
 
 	public class GeometryGripX_Property : GeometryGrip_Property
 	{
-		public GeometryGripX_Property(string name, cadGeometry geom, int index)
-			: base(name, geom, index) { }
+		public GeometryGripX_Property(ICadGeometry owner, string strSysName, int index)
+			: base(owner, strSysName, index) { }
 
 		//=============================================================================
 		public override object Value
@@ -134,8 +144,8 @@ namespace simpleCAD.Geometry
 
 	public class GeometryGripY_Property : GeometryGrip_Property
 	{
-		public GeometryGripY_Property(string name, cadGeometry geom, int index)
-			: base(name, geom, index) { }
+		public GeometryGripY_Property(ICadGeometry owner, string strSysName, int index)
+			: base(owner, strSysName, index) { }
 
 		//=============================================================================
 		public override object Value
@@ -152,83 +162,6 @@ namespace simpleCAD.Geometry
 				catch { }
 
 				NotifyPropertyChanged(() => Value);
-			}
-		}
-	}
-
-	public class GeometryColor_Property : PropertyViewModel
-	{
-		private BrushConverter m_bc = new BrushConverter();
-		private cadGeometry m_geom = null;
-
-		public GeometryColor_Property(cadGeometry geom)
-			: base("Color")
-		{
-			m_geom = geom;
-		}
-
-		//=============================================================================
-		public override object Value
-		{
-			get
-			{
-				if (m_geom != null)
-					return m_geom.Color;
-
-				return Brushes.Black;
-			}
-			set
-			{
-				string strVal = string.Empty;
-				if (value is string)
-					strVal = value as string;
-
-				if (m_geom != null)
-				{
-					try
-					{
-						Brush brushVal = m_bc.ConvertFromString(strVal) as Brush;
-						if (brushVal != null)
-							m_geom.Color = brushVal;
-					}
-					catch { }
-				}
-
-				NotifyPropertyChanged(() => Value);
-			}
-		}
-	}
-
-	public class GeometryThickness_Property : PropertyViewModel
-	{
-		private cadGeometry m_geom = null;
-
-		public GeometryThickness_Property(cadGeometry geom)
-			: base("Thickness")
-		{
-			m_geom = geom;
-		}
-
-		//=============================================================================
-		public override object Value
-		{
-			get
-			{
-				if (m_geom != null)
-					return m_geom.Thickness;
-
-				return 0.0;
-			}
-			set
-			{
-				if (m_geom != null)
-				{
-					try
-					{
-						m_geom.Thickness = Convert.ToDouble(value);
-					}
-					catch { }
-				}
 			}
 		}
 	}

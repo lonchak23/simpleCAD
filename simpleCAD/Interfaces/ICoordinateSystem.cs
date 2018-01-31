@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
 
-namespace simpleCAD.Geometry
+namespace simpleCAD
 {
+	public interface ICoordinateSystem
+	{
+		Point GetLocalPoint(Point globalPnt);
+	}
 }
