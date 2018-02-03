@@ -7,72 +7,72 @@
         xmlns:geometry="clr-namespace:simpleCAD.Geometry"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"/>
+			<RowDefinition Height="Auto"/>
+		</Grid.RowDefinitions>
 
-        <StackPanel
+		<StackPanel
 			Grid.Row="0"
 			Orientation="Vertical">
-            <Button Content="OK" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-            <Button Content="OK2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-        </StackPanel>
+			<Button Content="OK" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+			<Button Content="OK2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+		</StackPanel>
 
-        <local:DrawingHost
+		<local:DrawingHost
 			x:Name="DH"
 			Grid.Row="0"
 			VerticalAlignment="Stretch"
 			HorizontalAlignment="Stretch"/>
 
 
-        <ListBox
+		<ListBox
 			Grid.Row="0"
 			VerticalAlignment="Top"
 			HorizontalAlignment="Right"
 			Grid.IsSharedSizeScope="True"
 			Background="Aqua"
 			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=DH}">
-            <ListBox.Resources>
-                <DataTemplate DataType="{x:Type geometry:PropertyViewModel}">
-                    <TextBox
+			<ListBox.Resources>
+				<DataTemplate DataType="{x:Type geometry:Property_ViewModel}">
+					<TextBox
 						IsReadOnly="{Binding IsReadOnly}"
 						Text="{Binding Value, Mode=TwoWay}"/>
-                </DataTemplate>
-            </ListBox.Resources>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Border>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" SharedSizeGroup="PropertyName" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" SharedSizeGroup="PropertyValue" />
-                            </Grid.ColumnDefinitions>
+				</DataTemplate>
+			</ListBox.Resources>
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Border>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*" SharedSizeGroup="PropertyName" />
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" SharedSizeGroup="PropertyValue" />
+							</Grid.ColumnDefinitions>
 
-                            <TextBlock
+							<TextBlock
 								Margin="1"
 								Grid.Column="0"
 								Text="{Binding Name}" />
-                            <GridSplitter
+							<GridSplitter
 								Grid.Column="1"
 								Width="1"
 								Background="Black"
 								VerticalAlignment="Stretch" />
-                            <ContentPresenter
+							<ContentPresenter
 								Margin="1"
 								Grid.Column="2"
 								Content="{Binding .}" />
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+						</Grid>
+					</Border>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
 
-        <CheckBox
+		<CheckBox
 			Grid.Row="1"
 			Content="Add line"
 			IsChecked="{Binding IsDrawingLine, ElementName=DH}"/>
-    </Grid>
+	</Grid>
 </Window>

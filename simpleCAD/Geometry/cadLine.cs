@@ -12,11 +12,6 @@ namespace simpleCAD.Geometry
 		private bool m_bFirstPnt_Setted = false;
 		private bool m_bSecondPnt_Setted = false;
 
-		private GeometryGripX_Property m_FirstPointX_Property = null;
-		private GeometryGripY_Property m_FirstPointY_Property = null;
-		private GeometryGripX_Property m_SecondPointX_Property = null;
-		private GeometryGripY_Property m_SecondPointY_Property = null;
-
 		private Brush m_Color = Brushes.Black;
 		private double m_Thickness = 2.0;
 
@@ -25,13 +20,7 @@ namespace simpleCAD.Geometry
 		public static string PROP_END_PNT_X = "Start end X";
 		public static string PROP_END_PNT_Y = "Start end Y";
 
-		public cadLine()
-		{
-			m_FirstPointX_Property = new GeometryGripX_Property(this, PROP_START_PNT_X, 0);
-			m_FirstPointY_Property = new GeometryGripY_Property(this, PROP_START_PNT_Y, 0);
-			m_SecondPointX_Property = new GeometryGripX_Property(this, PROP_END_PNT_X, 1);
-			m_SecondPointY_Property = new GeometryGripY_Property(this, PROP_END_PNT_Y, 1);
-		}
+		public cadLine() { }
 
 		//=============================================================================
 		public bool IsPlaced
@@ -108,28 +97,24 @@ namespace simpleCAD.Geometry
 		}
 
 		//=============================================================================
-		private List<PropertyViewModel> m_Properties = null;
-		public List<PropertyViewModel> Properties
+		private List<Property_ViewModel> m_Properties = null;
+		public List<Property_ViewModel> Properties
 		{
 			get
 			{
 				if (m_Properties == null)
 				{
-					m_Properties = new List<PropertyViewModel>();
+					m_Properties = new List<Property_ViewModel>();
 					m_Properties.Add(new GeometryType_Property(this, "Line"));
 
-					List<Point> grips = GetGripPoints();
-					if (grips.Count == 2)
-					{
-						m_Properties.Add(m_FirstPointX_Property);
-						m_Properties.Add(m_FirstPointY_Property);
+					m_Properties.Add(new GeometryProperty(this, PROP_START_PNT_X));
+					m_Properties.Add(new GeometryProperty(this, PROP_START_PNT_Y));
 
-						m_Properties.Add(m_SecondPointX_Property);
-						m_Properties.Add(m_SecondPointY_Property);
-					}
+					m_Properties.Add(new GeometryProperty(this, PROP_END_PNT_X));
+					m_Properties.Add(new GeometryProperty(this, PROP_END_PNT_Y));
 
-					m_Properties.Add(new PropertyViewModel(this, Constants.SYSNAME_PROP_COLOR));
-					m_Properties.Add(new PropertyViewModel(this, Constants.SYSNAME_PROP_THICKNESS));
+					m_Properties.Add(new GeometryProperty(this, Constants.SYSNAME_PROP_COLOR));
+					m_Properties.Add(new GeometryProperty(this, Constants.SYSNAME_PROP_THICKNESS));
 				}
 				return m_Properties;
 			}
@@ -144,6 +129,14 @@ namespace simpleCAD.Geometry
 				return m_Color;
 			else if (Constants.SYSNAME_PROP_THICKNESS == strPropSysName)
 				return m_Thickness;
+			else if (PROP_START_PNT_X == strPropSysName)
+				return m_FirstPnt.X;
+			else if (PROP_START_PNT_Y == strPropSysName)
+				return m_FirstPnt.Y;
+			else if (PROP_END_PNT_X == strPropSysName)
+				return m_SecondPnt.X;
+			else if (PROP_END_PNT_Y == strPropSysName)
+				return m_SecondPnt.Y;
 
 			return null;
 		}

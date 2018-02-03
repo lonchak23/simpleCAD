@@ -11,7 +11,7 @@ namespace simpleCAD
 	public interface ICadGeometry
 	{
 		bool IsPlaced { get; }
-		List<PropertyViewModel> Properties { get; }
+		List<Property_ViewModel> Properties { get; }
 
 		void Draw(ICoordinateSystem cs, DrawingContext dc);
 

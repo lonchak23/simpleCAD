@@ -33,22 +33,11 @@ namespace simpleCAD
 				return true;
 			}
 		}
-		public List<PropertyViewModel> Properties
+		public List<Property_ViewModel> Properties
 		{
 			get
 			{
-				List<PropertyViewModel> result = new List<PropertyViewModel>();
-				if (m_geometry != null)
-				{
-					List<PropertyViewModel> props = m_geometry.Properties;
-					if(props != null)
-					{
-						foreach (PropertyViewModel p in props)
-							result.Add(new GeometryWrapper_Property(this, p));
-					}
-				}
-
-				return result;
+				return m_geometry.Properties;
 			}
 		}
 

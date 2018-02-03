@@ -366,7 +366,7 @@ namespace simpleCAD
 					g.Draw(this, null);
 			}
 
-			if (m_grips == null)
+			if (m_grips != null)
 			{
 				foreach (cadGrip g in m_grips)
 					g.Update();
