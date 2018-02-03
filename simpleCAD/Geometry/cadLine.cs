@@ -20,12 +20,17 @@ namespace simpleCAD.Geometry
 		private Brush m_Color = Brushes.Black;
 		private double m_Thickness = 2.0;
 
+		public static string PROP_START_PNT_X = "Start point X";
+		public static string PROP_START_PNT_Y = "Start point Y";
+		public static string PROP_END_PNT_X = "Start end X";
+		public static string PROP_END_PNT_Y = "Start end Y";
+
 		public cadLine()
 		{
-			m_FirstPointX_Property = new GeometryGripX_Property(this, "Start point X", 0);
-			m_FirstPointY_Property = new GeometryGripY_Property(this, "Start point Y", 0);
-			m_SecondPointX_Property = new GeometryGripX_Property(this,"End point X", 1);
-			m_SecondPointY_Property = new GeometryGripY_Property(this, "End point Y", 1);
+			m_FirstPointX_Property = new GeometryGripX_Property(this, PROP_START_PNT_X, 0);
+			m_FirstPointY_Property = new GeometryGripY_Property(this, PROP_START_PNT_Y, 0);
+			m_SecondPointX_Property = new GeometryGripX_Property(this, PROP_END_PNT_X, 1);
+			m_SecondPointY_Property = new GeometryGripY_Property(this, PROP_END_PNT_Y, 1);
 		}
 
 		//=============================================================================
@@ -164,6 +169,38 @@ namespace simpleCAD.Geometry
 				{
 					m_Thickness = System.Convert.ToDouble(propValue);
 					return true;
+				}
+				catch { }
+			}
+			else if(PROP_START_PNT_X == strPropSysName)
+			{
+				try
+				{
+					m_FirstPnt.X = System.Convert.ToDouble(propValue);
+				}
+				catch { }
+			}
+			else if (PROP_START_PNT_Y == strPropSysName)
+			{
+				try
+				{
+					m_FirstPnt.Y = System.Convert.ToDouble(propValue);
+				}
+				catch { }
+			}
+			else if (PROP_END_PNT_X == strPropSysName)
+			{
+				try
+				{
+					m_SecondPnt.X = System.Convert.ToDouble(propValue);
+				}
+				catch { }
+			}
+			else if (PROP_END_PNT_Y == strPropSysName)
+			{
+				try
+				{
+					m_SecondPnt.Y = System.Convert.ToDouble(propValue);
 				}
 				catch { }
 			}

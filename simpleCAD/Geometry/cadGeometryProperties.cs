@@ -22,7 +22,7 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		private string m_Name = string.Empty;
 
-		public string Name
+		public virtual string Name
 		{
 			get { return m_Name; }
 		}
@@ -48,7 +48,7 @@ namespace simpleCAD.Geometry
 
 		//=============================================================================
 		protected bool m_IsReadOnly = false;
-		public bool IsReadOnly
+		public virtual bool IsReadOnly
 		{
 			get { return m_IsReadOnly; }
 		}
@@ -57,6 +57,62 @@ namespace simpleCAD.Geometry
 		public void Update_Value()
 		{
 			NotifyPropertyChanged(() => Value);
+		}
+	}
+
+	internal class GeometryWrapper_Property : PropertyViewModel
+	{
+		PropertyViewModel m_propToWrap = null;
+
+		internal GeometryWrapper_Property(GeometryWraper owner, PropertyViewModel propToWrap)
+			: base(owner, propToWrap.Name)
+		{
+			m_propToWrap = propToWrap;
+		}
+
+		public override string Name
+		{
+			get
+			{
+				if (m_propToWrap != null)
+					return m_propToWrap.Name;
+
+				return string.Empty;
+			}
+		}
+
+		public override object Value
+		{
+			get
+			{
+				if (m_propToWrap != null)
+					return m_propToWrap.Value;
+
+				return base.Value;
+			}
+		
+			set
+			{
+				if (m_propToWrap != null)
+					m_propToWrap.Value = value;
+
+				GeometryWraper gw = m_owner as GeometryWraper;
+				if (gw != null)
+					gw.OnPropertyChanged();
+		
+				Update_Value();
+			}
+		}
+
+		public override bool IsReadOnly
+		{
+			get
+			{
+				if (m_propToWrap != null)
+					return m_propToWrap.IsReadOnly;
+
+				return true;
+			}
 		}
 	}
 
@@ -112,7 +168,7 @@ namespace simpleCAD.Geometry
 			if (m_owner != null)
 				result = m_owner.SetGripPoint(m_index, pnt);
 
-			DrawingHost.RedrawGrips();
+			DrawingHost.UpdatePlot();
 
 			return result;
 		}

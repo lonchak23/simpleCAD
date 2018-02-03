@@ -47,7 +47,7 @@ namespace simpleCAD
 
 		public DrawingHost()
 		{
-			OnRedrawGripsHandler += OnRedrawGrips;
+			OnUpdatePlotHandler += OnUpdatePlot;
 		}
 
 		#endregion
@@ -133,12 +133,7 @@ namespace simpleCAD
 		}
 		private static void On_Scale_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			DrawingHost dh = d as DrawingHost;
-			if (dh != null)
-			{
-				dh.UpdateGeometry();
-				dh.UpdateGrips();
-			}
+			UpdatePlot();
 		}
 
 		//=============================================================================
@@ -157,7 +152,7 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		private static event EventHandler OnRedrawGripsHandler;
+		private static event EventHandler OnUpdatePlotHandler;
 
 		#endregion
 
@@ -259,8 +254,7 @@ namespace simpleCAD
 			{
 				Point pnt = _GetLocalPoint(e);
 				m_TempOffsetVector = (m_MiddleBtnPressed_Point - pnt);
-				UpdateGeometry();
-				UpdateGrips();
+				UpdatePlot();
 				return;
 			}
 
@@ -352,26 +346,31 @@ namespace simpleCAD
 			m_TempOffsetVector.X = 0;
 			m_TempOffsetVector.Y = 0;
 
-			UpdateGeometry();
-			UpdateGrips();
+			UpdatePlot();
 		}
 
 		#endregion
 
 		//=============================================================================
-		public static void RedrawGrips()
+		public static void UpdatePlot()
 		{
-			EventHandler handler = OnRedrawGripsHandler;
+			EventHandler handler = OnUpdatePlotHandler;
 			if (handler != null)
 				handler(null, EventArgs.Empty);
 		}
-		private void OnRedrawGrips(object sender, EventArgs e)
+		private void OnUpdatePlot(object sender, EventArgs e)
 		{
-			if (m_grips == null)
-				return;
+			if (m_geometries != null)
+			{
+				foreach (ICadGeometry g in m_geometries)
+					g.Draw(this, null);
+			}
 
-			foreach (cadGrip g in m_grips)
-				g.Update();
+			if (m_grips == null)
+			{
+				foreach (cadGrip g in m_grips)
+					g.Update();
+			}
 		}
 
 		//=============================================================================
@@ -430,20 +429,6 @@ namespace simpleCAD
 					}
 				}
 			}
-		}
-
-		//=============================================================================
-		public void UpdateGeometry()
-		{
-			foreach (ICadGeometry g in m_geometries)
-				g.Draw(this, null);
-		}
-
-		//=============================================================================
-		public void UpdateGrips()
-		{
-			foreach (cadGrip g in m_grips)
-				g.Update();
 		}
 
 		//=============================================================================

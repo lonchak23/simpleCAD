@@ -37,10 +37,18 @@ namespace simpleCAD
 		{
 			get
 			{
+				List<PropertyViewModel> result = new List<PropertyViewModel>();
 				if (m_geometry != null)
-					return m_geometry.Properties;
+				{
+					List<PropertyViewModel> props = m_geometry.Properties;
+					if(props != null)
+					{
+						foreach (PropertyViewModel p in props)
+							result.Add(new GeometryWrapper_Property(this, p));
+					}
+				}
 
-				return new List<PropertyViewModel>();
+				return result;
 			}
 		}
 
@@ -101,11 +109,17 @@ namespace simpleCAD
 			if (m_geometry != null)
 			{
 				bool bRes = m_geometry.SetPropertyValue(strPropSysName, propValue);
-				Draw(m_owner, null);
+				OnPropertyChanged();
 				return bRes;
 			}
 
 			return false;
+		}
+
+		public void OnPropertyChanged()
+		{
+			if (m_geometry != null)
+				Draw(m_owner, null);
 		}
 	}
 }
