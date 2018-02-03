@@ -264,6 +264,15 @@ namespace simpleCAD
 				m_NewGeometry.OnMouseMove(globalPnt);
 			else if (m_gripToMove != null)
 				m_gripToMove.Move(globalPnt);
+
+			//
+			// Update properties for selected geometry
+			ICadGeometry sg = SelectedGeometry;
+			if (sg != null)
+			{
+				foreach (Property_ViewModel p in sg.Properties)
+					p.Update_Value();
+			}
 		}
 
 		//=============================================================================
