@@ -404,7 +404,7 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		public Vector GetOffset()
+		private Vector GetOffset()
 		{
 			return m_OffsetVector + m_TempOffsetVector;
 		}
