@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Media;
 
 namespace simpleCAD.Geometry
 {
-	internal class cadLine : ICadGeometry
+	[Serializable]
+	internal class cadLine : ICadGeometry, ISerializable
 	{
 		private Point m_FirstPnt = new Point();
 		private Point m_SecondPnt = new Point();
@@ -120,6 +123,7 @@ namespace simpleCAD.Geometry
 			}
 		}
 
+		//=============================================================================
 		public object GetPropertyValue(string strPropSysName)
 		{
 			if (string.IsNullOrEmpty(strPropSysName))
@@ -141,6 +145,7 @@ namespace simpleCAD.Geometry
 			return null;
 		}
 
+		//=============================================================================
 		public bool SetPropertyValue(string strPropSysName, object propValue)
 		{
 			if (string.IsNullOrEmpty(strPropSysName))
@@ -199,6 +204,52 @@ namespace simpleCAD.Geometry
 			}
 
 			return false;
+		}
+
+		//=============================================================================
+		public ICadGeometry Clone()
+		{
+			return Utils.DeepClone<cadLine>(this);
+		}
+
+		//=============================================================================
+		// Implement this method to serialize data. The method is called 
+		// on serialization.
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("m_FirstPnt", m_FirstPnt);
+			info.AddValue("m_SecondPnt", m_SecondPnt);
+
+			info.AddValue("m_bFirstPnt_Setted", m_bFirstPnt_Setted);
+			info.AddValue("m_bSecondPnt_Setted", m_bSecondPnt_Setted);
+
+			BrushConverter bc = new BrushConverter();
+			info.AddValue("m_Color", bc.ConvertToString(m_Color));
+
+			info.AddValue("m_Thickness", m_Thickness);
+		}
+
+		//=============================================================================
+		// The special constructor is used to deserialize values.
+		public cadLine(SerializationInfo info, StreamingContext context)
+		{
+			m_FirstPnt = (Point)info.GetValue("m_FirstPnt", typeof(Point));
+			m_SecondPnt = (Point)info.GetValue("m_SecondPnt", typeof(Point));
+
+			m_bFirstPnt_Setted = (bool)info.GetValue("m_bFirstPnt_Setted", typeof(bool));
+			m_bSecondPnt_Setted = (bool)info.GetValue("m_bSecondPnt_Setted", typeof(bool));
+
+			try
+			{
+				BrushConverter bc = new BrushConverter();
+				m_Color = (Brush)bc.ConvertFromString((string)info.GetValue("m_Color", typeof(string)));
+			}
+			catch
+			{
+				m_Color = Brushes.Black;
+			}
+
+			m_Thickness = (double)info.GetValue("m_Thickness", typeof(double));
 		}
 	}
 }

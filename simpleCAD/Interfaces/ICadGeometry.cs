@@ -24,5 +24,13 @@ namespace simpleCAD
 
 		object GetPropertyValue(string strPropSysName);
 		bool SetPropertyValue(string strPropSysName, object propValue);
+
+		/// <summary>
+		/// Need for realization "Prototype" pattern.
+		/// simpleCad will call Clone method to add new object at plot.
+		/// This method allow user to configure which object simpleCad should create at runtime.
+		/// </summary>
+		/// <returns></returns>
+		ICadGeometry Clone();
 	}
 }

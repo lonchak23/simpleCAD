@@ -110,5 +110,14 @@ namespace simpleCAD
 			if (m_geometry != null)
 				Draw(m_owner, null);
 		}
+
+		public ICadGeometry Clone()
+		{
+			ICadGeometry cloneGeom = null;
+			if (m_geometry != null)
+				cloneGeom = m_geometry.Clone();
+
+			return new GeometryWraper(m_owner, cloneGeom);
+		}
 	}
 }
