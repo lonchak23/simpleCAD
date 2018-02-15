@@ -17,6 +17,10 @@ namespace simpleCAD
 			m_geometry = geom;
 		}
 
+		//=============================================================================
+		public static string sDisplayName = "geometryWrapper";
+		public string DisplayName { get { return sDisplayName; } }
+
 		//---------------------------------------------------------
 		private DrawingHost m_owner = null;
 		public DrawingHost Owner { get { return m_owner; } }

@@ -7,7 +7,7 @@ using System.Windows.Media;
 namespace simpleCAD.Geometry
 {
 	[Serializable]
-	internal class cadLine : ICadGeometry, ISerializable
+	public class cadLine : ICadGeometry, ISerializable
 	{
 		private Point m_FirstPnt = new Point();
 		private Point m_SecondPnt = new Point();
@@ -24,6 +24,10 @@ namespace simpleCAD.Geometry
 		public static string PROP_END_PNT_Y = "Start end Y";
 
 		public cadLine() { }
+
+		//=============================================================================
+		public static string sDisplayName = "cadLine";
+		public string DisplayName { get { return sDisplayName; } }
 
 		//=============================================================================
 		public bool IsPlaced
@@ -108,7 +112,7 @@ namespace simpleCAD.Geometry
 				if (m_Properties == null)
 				{
 					m_Properties = new List<Property_ViewModel>();
-					m_Properties.Add(new GeometryType_Property(this, "Line"));
+					m_Properties.Add(new GeometryType_Property(this, sDisplayName));
 
 					m_Properties.Add(new GeometryProperty(this, PROP_START_PNT_X));
 					m_Properties.Add(new GeometryProperty(this, PROP_START_PNT_Y));

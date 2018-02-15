@@ -10,6 +10,8 @@ namespace simpleCAD
 	/// </summary>
 	public interface ICadGeometry
 	{
+		string DisplayName { get; }
+
 		bool IsPlaced { get; }
 		List<Property_ViewModel> Properties { get; }
 

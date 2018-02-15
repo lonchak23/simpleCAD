@@ -26,17 +26,17 @@ namespace simpleCAD
 				typeof(DrawingHost),
 				new FrameworkPropertyMetadata(2.0));
 
-			DrawingHost.IsDrawingLineProperty = DependencyProperty.Register(
-				"IsDrawingLine",
-				typeof(bool),
-				typeof(DrawingHost),
-				new FrameworkPropertyMetadata(false, On_IsDrawingLine_Changed));
-
 			DrawingHost.SelectedGeometryProperty = DependencyProperty.Register(
 				"SelectedGeometry",
 				typeof(ICadGeometry),
 				typeof(DrawingHost),
 				new FrameworkPropertyMetadata(null, On_SelectedGeometry_Changed));
+
+			DrawingHost.GeometryToCreateProperty = DependencyProperty.Register(
+				"GeometryToCreate",
+				typeof(ICadGeometry),
+				typeof(DrawingHost),
+				new FrameworkPropertyMetadata(null, On_GeometryToCreate_Changed));
 
 			DrawingHost.ScaleProperty = DependencyProperty.Register(
 				"Scale",
@@ -110,20 +110,6 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		public static readonly DependencyProperty IsDrawingLineProperty;
-		public bool IsDrawingLine
-		{
-			get { return (bool)GetValue(DrawingHost.IsDrawingLineProperty); }
-			set { SetValue(DrawingHost.IsDrawingLineProperty, value); }
-		}
-		private static void On_IsDrawingLine_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
-		{
-			DrawingHost dh = d as DrawingHost;
-			if (dh != null)
-				dh.On_DrawGeometryCommand((bool)e.NewValue);
-		}
-
-		//=============================================================================
 		public static readonly DependencyProperty ScaleProperty;
 
 		public double Scale
@@ -149,6 +135,37 @@ namespace simpleCAD
 			DrawingHost dh = d as DrawingHost;
 			if (dh != null)
 				dh.ResetGrips();
+		}
+
+		//=============================================================================
+		public static readonly DependencyProperty GeometryToCreateProperty;
+		public ICadGeometry GeometryToCreate
+		{
+			get { return (ICadGeometry)GetValue(DrawingHost.GeometryToCreateProperty); }
+			set { SetValue(DrawingHost.GeometryToCreateProperty, value); }
+		}
+		private static void On_GeometryToCreate_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			DrawingHost dh = d as DrawingHost;
+			if (dh != null)
+				dh.On_GeometryToCreate_Changed();
+		}
+		public void On_GeometryToCreate_Changed()
+		{
+			//
+			SelectedGeometry = null;
+
+			// delete last not initialized
+			if (m_NewGeometry != null)
+			{
+				DrawingVisual dc = m_NewGeometry.GetGeometryWrapper();
+				RemoveVisualChild(dc);
+				RemoveLogicalChild(dc);
+				m_geometries.Remove(m_NewGeometry);
+			}
+
+			m_gripToMove = null;
+			ClearGrips();
 		}
 
 		//=============================================================================
@@ -198,17 +215,22 @@ namespace simpleCAD
 
 			Point globalPnt = _GetGlobalPoint(e);
 
+			// Clone new geometry and add it as a child
 			if(m_NewGeometry == null)
 			{
-				if(IsDrawingLine)
+				ICadGeometry geomToCreate = GeometryToCreate;
+				if(geomToCreate != null)
 				{
-					// Вынести этот код на нажатие кнопки
-					m_NewGeometry = new GeometryWraper(this, new cadLine());
-					DrawingVisual dv = m_NewGeometry.GetGeometryWrapper();
+					ICadGeometry geomCopy = geomToCreate.Clone();
+					if (geomCopy != null)
+					{
+						m_NewGeometry = new GeometryWraper(this, geomCopy);
+						DrawingVisual dv = m_NewGeometry.GetGeometryWrapper();
 
-					m_geometries.Add(m_NewGeometry);
-					AddVisualChild(dv);
-					AddLogicalChild(dv);
+						m_geometries.Add(m_NewGeometry);
+						AddVisualChild(dv);
+						AddLogicalChild(dv);
+					}
 				}
 			}
 
