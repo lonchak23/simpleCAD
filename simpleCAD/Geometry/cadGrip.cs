@@ -9,7 +9,7 @@ using System.Windows.Shapes;
 
 namespace simpleCAD.Geometry
 {
-	public class cadGrip : DrawingVisual
+	internal class cadGrip : DrawingVisual
 	{
 		private ICoordinateSystem m_cs = null;
 		private ICadGeometry m_owner = null;

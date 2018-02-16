@@ -42,23 +42,7 @@
 			x:Name="DH"
 			Grid.Row="0"
 			VerticalAlignment="Stretch"
-			HorizontalAlignment="Stretch"
-			RenderTransformOrigin="0.5 0.5">
-			<!--
-			Default WPF coordinate system has Y-axis, directed to down.
-			So left top corner has (0, 0) coordinate.
-			
-			All graphics that i have seen use Y-axis, directed to up.
-			So left BOT corner has (0,0) coordinate.
-			
-			Lets revert Y-axis.
-			So all coordinate properties will show default "human" coordinate system.
-			-->
-			<sCAD:DrawingHost.RenderTransform>
-				<ScaleTransform ScaleY="-1"/>
-			</sCAD:DrawingHost.RenderTransform>
-		</sCAD:DrawingHost>
-
+			HorizontalAlignment="Stretch"/>
 
 		<ListBox
 			Grid.Row="0"

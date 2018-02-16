@@ -47,6 +47,18 @@ namespace simpleCAD
 
 		public DrawingHost()
 		{
+			//
+			// Default WPF coordinate system has Y-axis, directed to down.
+			// So left top corner has(0, 0) coordinate.
+			//
+			// All graphics that i have seen use Y-axis, directed to up.
+			// So left BOT corner has(0, 0) coordinate.
+			//
+			// Lets revert Y - axis.
+			// So all coordinate properties will show default "human" coordinate system.
+			this.RenderTransform = new ScaleTransform(1, -1);
+			this.RenderTransformOrigin = new Point(0.5, 0.5);
+
 			OnUpdatePlotHandler += OnUpdatePlot;
 		}
 
