@@ -1,4 +1,5 @@
-﻿using System;
+﻿using simpleCAD;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace simpleCAD
+namespace simpleCAD_Example
 {
 	/// <summary>
 	/// CheckBox with TargetGeometry dependency property, which one should be binded to DrawingHost.GeometryToCreate dependency property.

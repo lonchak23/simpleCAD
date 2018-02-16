@@ -1,7 +1,7 @@
-﻿<Application x:Class="simpleCAD.App"
+﻿<Application x:Class="simpleCAD_Example.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:simpleCAD"
+             xmlns:local="clr-namespace:simpleCAD_Example"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

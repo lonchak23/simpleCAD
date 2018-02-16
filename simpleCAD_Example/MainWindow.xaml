@@ -1,26 +1,30 @@
 ﻿<Window
-	x:Class="simpleCAD.MainWindow"
+	x:Class="simpleCAD_Example.MainWindow"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:local="clr-namespace:simpleCAD_Example"
 	
-	xmlns:local="clr-namespace:simpleCAD"
-	xmlns:geometry="clr-namespace:simpleCAD.Geometry"
+	xmlns:sCAD="clr-namespace:simpleCAD;assembly=simpleCAD"
+	xmlns:cadGeom="clr-namespace:simpleCAD.Geometry;assembly=simpleCAD"
 	
 	mc:Ignorable="d"
-	Title="MainWindow" Height="350" Width="525">
+	
+	Title="MainWindow"
+	Height="350"
+	Width="525">
 
 	<Window.Resources>
 
 		<x:Array
 			x:Key="GeometryTypes"
-			Type="local:ICadGeometry">
-			<geometry:cadLine />
+			Type="sCAD:ICadGeometry">
+			<cadGeom:cadLine />
 		</x:Array>
 
 	</Window.Resources>
-	
+
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -34,7 +38,7 @@
 			<Button Content="OK2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
 		</StackPanel>
 
-		<local:DrawingHost
+		<sCAD:DrawingHost
 			x:Name="DH"
 			Grid.Row="0"
 			VerticalAlignment="Stretch"
@@ -50,10 +54,10 @@
 			Lets revert Y-axis.
 			So all coordinate properties will show default "human" coordinate system.
 			-->
-			<local:DrawingHost.RenderTransform>
+			<sCAD:DrawingHost.RenderTransform>
 				<ScaleTransform ScaleY="-1"/>
-			</local:DrawingHost.RenderTransform>
-		</local:DrawingHost>
+			</sCAD:DrawingHost.RenderTransform>
+		</sCAD:DrawingHost>
 
 
 		<ListBox
@@ -64,7 +68,7 @@
 			Background="Aqua"
 			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=DH}">
 			<ListBox.Resources>
-				<DataTemplate DataType="{x:Type geometry:Property_ViewModel}">
+				<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
 					<TextBox
 						IsReadOnly="{Binding IsReadOnly}"
 						Text="{Binding Value, Mode=TwoWay}"/>
@@ -110,7 +114,7 @@
 			</ListBox.ItemsPanel>
 
 			<ListBox.ItemTemplate>
-				<DataTemplate DataType="{x:Type local:ICadGeometry}">
+				<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
 					<local:GeometryCheckbox
 						Content="{Binding DisplayName}"
 						TargetGeometry="{Binding Path=GeometryToCreate, ElementName=DH, Mode=TwoWay}"

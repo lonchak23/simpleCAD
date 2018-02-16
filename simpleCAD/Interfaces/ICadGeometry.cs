@@ -29,7 +29,7 @@ namespace simpleCAD
 
 		/// <summary>
 		/// Need for realization "Prototype" pattern.
-		/// simpleCad will call Clone method to add new object at plot.
+		/// simpleCad will call Clone method to add new object at a plot.
 		/// This method allow user to configure which object simpleCad should create at runtime.
 		/// </summary>
 		/// <returns></returns>
