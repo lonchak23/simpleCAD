@@ -98,6 +98,8 @@ namespace simpleCAD.Geometry
 					m_FirstPnt = pnt;
 				else
 					m_SecondPnt = pnt;
+
+				return true;
 			}
 
 			return false;
@@ -179,6 +181,7 @@ namespace simpleCAD.Geometry
 				try
 				{
 					m_FirstPnt.X = System.Convert.ToDouble(propValue);
+					return true;
 				}
 				catch { }
 			}
@@ -187,6 +190,7 @@ namespace simpleCAD.Geometry
 				try
 				{
 					m_FirstPnt.Y = System.Convert.ToDouble(propValue);
+					return true;
 				}
 				catch { }
 			}
@@ -195,6 +199,7 @@ namespace simpleCAD.Geometry
 				try
 				{
 					m_SecondPnt.X = System.Convert.ToDouble(propValue);
+					return true;
 				}
 				catch { }
 			}
@@ -203,6 +208,7 @@ namespace simpleCAD.Geometry
 				try
 				{
 					m_SecondPnt.Y = System.Convert.ToDouble(propValue);
+					return true;
 				}
 				catch { }
 			}

@@ -54,6 +54,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Geometry\cadCircle.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="DrawingHost.cs" />

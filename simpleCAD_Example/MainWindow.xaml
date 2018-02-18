@@ -21,6 +21,7 @@
 			x:Key="GeometryTypes"
 			Type="sCAD:ICadGeometry">
 			<cadGeom:cadLine />
+			<cadGeom:cadCircle />
 		</x:Array>
 
 	</Window.Resources>
