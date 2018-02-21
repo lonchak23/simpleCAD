@@ -15,7 +15,7 @@ namespace simpleCAD.Geometry
 		private bool m_bFirstPnt_Setted = false;
 		private bool m_bSecondPnt_Setted = false;
 
-		private Brush m_Color = Brushes.Black;
+		private Color m_Color = Colors.Black;
 		private double m_Thickness = 2.0;
 
 		public static string PROP_START_PNT_X = "Start point X";
@@ -67,7 +67,7 @@ namespace simpleCAD.Geometry
 		{
 			if (cs != null && dc != null)
 			{
-				Pen _pen = new Pen(m_Color, m_Thickness);
+				Pen _pen = new Pen(new SolidColorBrush(m_Color), m_Thickness);
 				dc.DrawLine(_pen, cs.GetLocalPoint(m_FirstPnt), cs.GetLocalPoint(m_SecondPnt));
 			}
 		}
@@ -161,8 +161,7 @@ namespace simpleCAD.Geometry
 			{
 				try
 				{
-					BrushConverter bc = new BrushConverter();
-					m_Color = bc.ConvertFrom(propValue) as Brush;
+					m_Color = (Color)ColorConverter.ConvertFromString(propValue as string);
 					return true;
 				}
 				catch { }
@@ -233,8 +232,7 @@ namespace simpleCAD.Geometry
 			info.AddValue("m_bFirstPnt_Setted", m_bFirstPnt_Setted);
 			info.AddValue("m_bSecondPnt_Setted", m_bSecondPnt_Setted);
 
-			BrushConverter bc = new BrushConverter();
-			info.AddValue("m_Color", bc.ConvertToString(m_Color));
+			info.AddValue("m_Color", m_Color.ToString());
 
 			info.AddValue("m_Thickness", m_Thickness);
 		}
@@ -251,12 +249,11 @@ namespace simpleCAD.Geometry
 
 			try
 			{
-				BrushConverter bc = new BrushConverter();
-				m_Color = (Brush)bc.ConvertFromString((string)info.GetValue("m_Color", typeof(string)));
+				m_Color = (Color)ColorConverter.ConvertFromString((string)info.GetValue("m_Color", typeof(string)));
 			}
 			catch
 			{
-				m_Color = Brushes.Black;
+				m_Color = Colors.Black;
 			}
 
 			m_Thickness = (double)info.GetValue("m_Thickness", typeof(double));

@@ -15,8 +15,8 @@ namespace simpleCAD.Geometry
 		private Point m_pntCenter = new Point(0.0, 0.0);
 		private double m_rRadius = 0.0;
 
-		private Brush m_Color = Brushes.Black;
-		private Brush m_FillColor = Brushes.Transparent;
+		private Color m_Color = Colors.Black;
+		private Color m_FillColor = Colors.Transparent;
 		private double m_Thickness = 2.0;
 
 		public static string PROP_PNT_CENTER_X = "Center point X";
@@ -71,8 +71,14 @@ namespace simpleCAD.Geometry
 
 			if(cs != null && dc != null)
 			{
-				Pen _pen = new Pen(m_Color, m_Thickness);
-				dc.DrawEllipse(m_FillColor, _pen, cs.GetLocalPoint(m_pntCenter), m_rRadius, m_rRadius);
+				Pen _pen = new Pen(new SolidColorBrush(m_Color), m_Thickness);
+				//
+				// If fill with transparent color then circle fill area will act in HitTest.
+				// Fill with null brush will disable circle HitTest on click in fill area.
+				Brush fillBrush = null;
+				if (m_FillColor != Colors.Transparent)
+					fillBrush = new SolidColorBrush(m_FillColor);
+				dc.DrawEllipse(fillBrush, _pen, cs.GetLocalPoint(m_pntCenter), m_rRadius, m_rRadius);
 			}
 		}
 
@@ -161,8 +167,7 @@ namespace simpleCAD.Geometry
 			{
 				try
 				{
-					BrushConverter bc = new BrushConverter();
-					m_Color = bc.ConvertFrom(propValue) as Brush;
+					m_Color = (Color)ColorConverter.ConvertFromString(propValue as string);
 					return true;
 				}
 				catch { }
@@ -171,8 +176,7 @@ namespace simpleCAD.Geometry
 			{
 				try
 				{
-					BrushConverter bc = new BrushConverter();
-					m_FillColor = bc.ConvertFrom(propValue) as Brush;
+					m_FillColor = (Color)ColorConverter.ConvertFromString(propValue as string);
 					return true;
 				}
 				catch { }
@@ -241,9 +245,8 @@ namespace simpleCAD.Geometry
 			info.AddValue("m_bCenter_IsSetted", m_bCenter_IsSetted);
 			info.AddValue("m_bRadius_IsSetted", m_bRadius_IsSetted);
 
-			BrushConverter bc = new BrushConverter();
-			info.AddValue("m_Color", bc.ConvertToString(m_Color));
-			info.AddValue("m_FillColor", bc.ConvertToString(m_FillColor));
+			info.AddValue("m_Color", m_Color.ToString());
+			info.AddValue("m_FillColor", m_FillColor.ToString());
 
 			info.AddValue("m_Thickness", m_Thickness);
 		}
@@ -260,22 +263,20 @@ namespace simpleCAD.Geometry
 
 			try
 			{
-				BrushConverter bc = new BrushConverter();
-				m_Color = (Brush)bc.ConvertFromString((string)info.GetValue("m_Color", typeof(string)));
+				m_Color = (Color)ColorConverter.ConvertFromString((string)info.GetValue("m_Color", typeof(string)));
 			}
 			catch
 			{
-				m_Color = Brushes.Black;
+				m_Color = Colors.Black;
 			}
 
 			try
 			{
-				BrushConverter bc = new BrushConverter();
-				m_FillColor = (Brush)bc.ConvertFromString((string)info.GetValue("m_FillColor", typeof(string)));
+				m_FillColor = (Color)ColorConverter.ConvertFromString((string)info.GetValue("m_FillColor", typeof(string)));
 			}
 			catch
 			{
-				m_FillColor = Brushes.Transparent;
+				m_FillColor = Colors.Transparent;
 			}
 
 			m_Thickness = (double)info.GetValue("m_Thickness", typeof(double));
