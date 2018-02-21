@@ -22,6 +22,7 @@
 			Type="sCAD:ICadGeometry">
 			<cadGeom:cadLine />
 			<cadGeom:cadCircle />
+			<cadGeom:cadEllipse />
 		</x:Array>
 
 	</Window.Resources>

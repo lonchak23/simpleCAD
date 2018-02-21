@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Geometry\cadCircle.cs" />
+    <Compile Include="Geometry\cadEllipse.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="DrawingHost.cs" />
