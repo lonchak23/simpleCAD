@@ -11,7 +11,7 @@ namespace simpleCAD
 	/// </summary>
 	internal class GeometryWraper : DrawingVisual, ICadGeometry
 	{
-		public GeometryWraper(DrawingHost owner, ICadGeometry geom)
+		public GeometryWraper(SimpleCAD owner, ICadGeometry geom)
 		{
 			m_owner = owner;
 			m_geometry = geom;
@@ -22,8 +22,8 @@ namespace simpleCAD
 		public string DisplayName { get { return sDisplayName; } }
 
 		//---------------------------------------------------------
-		private DrawingHost m_owner = null;
-		public DrawingHost Owner { get { return m_owner; } }
+		private SimpleCAD m_owner = null;
+		public SimpleCAD Owner { get { return m_owner; } }
 		//---------------------------------------------------------
 		private ICadGeometry m_geometry = null;
 		public ICadGeometry Geometry { get { return m_geometry; } }

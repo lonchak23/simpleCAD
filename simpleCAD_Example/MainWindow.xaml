@@ -23,6 +23,7 @@
 			<cadGeom:cadLine />
 			<cadGeom:cadCircle />
 			<cadGeom:cadEllipse />
+			<cadGeom:cadRectangle />
 		</x:Array>
 
 	</Window.Resources>
@@ -40,7 +41,7 @@
 			<Button Content="OK2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
 		</StackPanel>
 
-		<sCAD:DrawingHost
+		<sCAD:SimpleCAD
 			x:Name="DH"
 			Grid.Row="0"
 			VerticalAlignment="Stretch"

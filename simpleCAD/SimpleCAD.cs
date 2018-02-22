@@ -8,44 +8,44 @@ using System.Diagnostics;
 
 namespace simpleCAD
 {
-	public class DrawingHost : FrameworkElement, ICoordinateSystem
+	public class SimpleCAD : FrameworkElement, ICoordinateSystem
 	{
 		#region Constructors
 
-		static DrawingHost()
+		static SimpleCAD()
 		{
-			DrawingHost.AxisBrushProperty = DependencyProperty.Register(
+			SimpleCAD.AxisBrushProperty = DependencyProperty.Register(
 				"AxisBrush",
 				typeof(Brush),
-				typeof(DrawingHost),
+				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(Brushes.Black));
 
-			DrawingHost.AxisThicknessProperty = DependencyProperty.Register(
+			SimpleCAD.AxisThicknessProperty = DependencyProperty.Register(
 				"AxisThickness",
 				typeof(double),
-				typeof(DrawingHost),
+				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(2.0));
 
-			DrawingHost.SelectedGeometryProperty = DependencyProperty.Register(
+			SimpleCAD.SelectedGeometryProperty = DependencyProperty.Register(
 				"SelectedGeometry",
 				typeof(ICadGeometry),
-				typeof(DrawingHost),
+				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(null, On_SelectedGeometry_Changed));
 
-			DrawingHost.GeometryToCreateProperty = DependencyProperty.Register(
+			SimpleCAD.GeometryToCreateProperty = DependencyProperty.Register(
 				"GeometryToCreate",
 				typeof(ICadGeometry),
-				typeof(DrawingHost),
+				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(null, On_GeometryToCreate_Changed));
 
-			DrawingHost.ScaleProperty = DependencyProperty.Register(
+			SimpleCAD.ScaleProperty = DependencyProperty.Register(
 				"Scale",
 				typeof(double),
-				typeof(DrawingHost),
+				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(1.0, On_Scale_Changed));
 		}
 
-		public DrawingHost()
+		public SimpleCAD()
 		{
 			//
 			// Default WPF coordinate system has Y-axis, directed to down.
@@ -109,16 +109,16 @@ namespace simpleCAD
 		public static readonly DependencyProperty AxisBrushProperty;
 		public Brush AxisBrush
 		{
-			get { return (Brush)GetValue(DrawingHost.AxisBrushProperty); }
-			set { SetValue(DrawingHost.AxisBrushProperty, value); }
+			get { return (Brush)GetValue(SimpleCAD.AxisBrushProperty); }
+			set { SetValue(SimpleCAD.AxisBrushProperty, value); }
 		}
 
 		//=============================================================================
 		public static readonly DependencyProperty AxisThicknessProperty;
 		public double AxisThickness
 		{
-			get { return (double)GetValue(DrawingHost.AxisThicknessProperty); }
-			set { SetValue(DrawingHost.AxisThicknessProperty, value); }
+			get { return (double)GetValue(SimpleCAD.AxisThicknessProperty); }
+			set { SetValue(SimpleCAD.AxisThicknessProperty, value); }
 		}
 
 		//=============================================================================
@@ -126,8 +126,8 @@ namespace simpleCAD
 
 		public double Scale
 		{
-			get { return (double)GetValue(DrawingHost.ScaleProperty); }
-			set { SetValue(DrawingHost.ScaleProperty, value); }
+			get { return (double)GetValue(SimpleCAD.ScaleProperty); }
+			set { SetValue(SimpleCAD.ScaleProperty, value); }
 		}
 		private static void On_Scale_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -139,12 +139,12 @@ namespace simpleCAD
 
 		public ICadGeometry SelectedGeometry
 		{
-			get { return (ICadGeometry)GetValue(DrawingHost.SelectedGeometryProperty); }
-			set { SetValue(DrawingHost.SelectedGeometryProperty, value); }
+			get { return (ICadGeometry)GetValue(SimpleCAD.SelectedGeometryProperty); }
+			set { SetValue(SimpleCAD.SelectedGeometryProperty, value); }
 		}
 		private static void On_SelectedGeometry_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			DrawingHost dh = d as DrawingHost;
+			SimpleCAD dh = d as SimpleCAD;
 			if (dh != null)
 				dh.ResetGrips();
 		}
@@ -153,12 +153,12 @@ namespace simpleCAD
 		public static readonly DependencyProperty GeometryToCreateProperty;
 		public ICadGeometry GeometryToCreate
 		{
-			get { return (ICadGeometry)GetValue(DrawingHost.GeometryToCreateProperty); }
-			set { SetValue(DrawingHost.GeometryToCreateProperty, value); }
+			get { return (ICadGeometry)GetValue(SimpleCAD.GeometryToCreateProperty); }
+			set { SetValue(SimpleCAD.GeometryToCreateProperty, value); }
 		}
 		private static void On_GeometryToCreate_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
-			DrawingHost dh = d as DrawingHost;
+			SimpleCAD dh = d as SimpleCAD;
 			if (dh != null)
 				dh.On_GeometryToCreate_Changed();
 		}

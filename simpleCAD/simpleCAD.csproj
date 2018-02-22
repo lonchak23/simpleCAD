@@ -56,9 +56,10 @@
   <ItemGroup>
     <Compile Include="Geometry\cadCircle.cs" />
     <Compile Include="Geometry\cadEllipse.cs" />
+    <Compile Include="Geometry\cadRectangle.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="BaseViewModel.cs" />
-    <Compile Include="DrawingHost.cs" />
+    <Compile Include="SimpleCAD.cs" />
     <Compile Include="GeometryWraper.cs" />
     <Compile Include="Geometry\cadGeometryProperties.cs" />
     <Compile Include="Geometry\cadGrip.cs" />

@@ -73,7 +73,7 @@ namespace simpleCAD.Geometry
 			if (e.PropertyName == "Value")
 			{
 				// notify DrawingHost for update all geometry
-				DrawingHost.UpdatePlot();
+				SimpleCAD.UpdatePlot();
 			}
 		}
 	}
