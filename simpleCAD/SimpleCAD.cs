@@ -14,17 +14,29 @@ namespace simpleCAD
 
 		static SimpleCAD()
 		{
-			SimpleCAD.AxisBrushProperty = DependencyProperty.Register(
-				"AxisBrush",
-				typeof(Brush),
+			SimpleCAD.AxesColorProperty = DependencyProperty.Register(
+				"AxesColor",
+				typeof(Color),
 				typeof(SimpleCAD),
-				new FrameworkPropertyMetadata(Brushes.Black));
+				new FrameworkPropertyMetadata(Colors.Black, On_AxesColor_Changed));
 
-			SimpleCAD.AxisThicknessProperty = DependencyProperty.Register(
-				"AxisThickness",
+			SimpleCAD.AxesThicknessProperty = DependencyProperty.Register(
+				"AxesThickness",
 				typeof(double),
 				typeof(SimpleCAD),
-				new FrameworkPropertyMetadata(2.0));
+				new FrameworkPropertyMetadata(2.0, On_AxesThickness_Changed));
+
+			SimpleCAD.AxesLengthProperty = DependencyProperty.Register(
+				"AxesLength",
+				typeof(double),
+				typeof(SimpleCAD),
+				new FrameworkPropertyMetadata(50.0, On_AxesLength_Changed));
+
+			SimpleCAD.AxesTextSizeProperty = DependencyProperty.Register(
+				"AxesTextSize",
+				typeof(double),
+				typeof(SimpleCAD),
+				new FrameworkPropertyMetadata(12.0, On_AxesTextSize_Changed));
 
 			SimpleCAD.SelectedGeometryProperty = DependencyProperty.Register(
 				"SelectedGeometry",
@@ -60,12 +72,18 @@ namespace simpleCAD
 			this.RenderTransformOrigin = new Point(0.5, 0.5);
 
 			OnUpdatePlotHandler += OnUpdatePlot;
+
+			m_axes = new CoordinateAxes(this);
+			AddVisualChild(m_axes);
+			AddLogicalChild(m_axes);
+			m_axes.Draw();
 		}
 
 		#endregion
 
 		#region Properties
 
+		private CoordinateAxes m_axes = null;
 		private List<ICadGeometry> m_geometries = new List<ICadGeometry>();
 		private List<cadGrip> m_grips = new List<cadGrip>();
 		private cadGrip m_gripToMove = null;
@@ -106,19 +124,59 @@ namespace simpleCAD
 		};
 
 		//=============================================================================
-		public static readonly DependencyProperty AxisBrushProperty;
-		public Brush AxisBrush
+		public static readonly DependencyProperty AxesColorProperty;
+		public Color AxesColor
 		{
-			get { return (Brush)GetValue(SimpleCAD.AxisBrushProperty); }
-			set { SetValue(SimpleCAD.AxisBrushProperty, value); }
+			get { return (Color)GetValue(SimpleCAD.AxesColorProperty); }
+			set { SetValue(SimpleCAD.AxesColorProperty, value); }
+		}
+		private static void On_AxesColor_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			SimpleCAD dh = d as SimpleCAD;
+			if (dh != null)
+				dh.Update_CoordinateAxes();
 		}
 
 		//=============================================================================
-		public static readonly DependencyProperty AxisThicknessProperty;
-		public double AxisThickness
+		public static readonly DependencyProperty AxesThicknessProperty;
+		public double AxesThickness
 		{
-			get { return (double)GetValue(SimpleCAD.AxisThicknessProperty); }
-			set { SetValue(SimpleCAD.AxisThicknessProperty, value); }
+			get { return (double)GetValue(SimpleCAD.AxesThicknessProperty); }
+			set { SetValue(SimpleCAD.AxesThicknessProperty, value); }
+		}
+		private static void On_AxesThickness_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			SimpleCAD dh = d as SimpleCAD;
+			if (dh != null)
+				dh.Update_CoordinateAxes();
+		}
+
+		//=============================================================================
+		public static readonly DependencyProperty AxesLengthProperty;
+		public double AxesLength
+		{
+			get { return (double)GetValue(SimpleCAD.AxesLengthProperty); }
+			set { SetValue(SimpleCAD.AxesLengthProperty, value); }
+		}
+		private static void On_AxesLength_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			SimpleCAD dh = d as SimpleCAD;
+			if (dh != null)
+				dh.Update_CoordinateAxes();
+		}
+
+		//=============================================================================
+		public static readonly DependencyProperty AxesTextSizeProperty;
+		public double AxesTextSize
+		{
+			get { return (double)GetValue(SimpleCAD.AxesTextSizeProperty); }
+			set { SetValue(SimpleCAD.AxesTextSizeProperty, value); }
+		}
+		private static void On_AxesTextSize_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			SimpleCAD dh = d as SimpleCAD;
+			if (dh != null)
+				dh.Update_CoordinateAxes();
 		}
 
 		//=============================================================================
@@ -190,17 +248,25 @@ namespace simpleCAD
 		//=============================================================================
 		protected override int VisualChildrenCount
 		{
-			get { return m_geometries.Count + m_grips.Count; }
+			// 1 for m_axes
+			get { return 1 + m_geometries.Count + m_grips.Count; }
 		}
 
 		//=============================================================================
 		protected override Visual GetVisualChild(int index)
 		{
-			ICadGeometry geom = null;
-			if (index >= 0 && index < m_geometries.Count)
-				geom = m_geometries[index];
+			int offset = 0;
 
-			int offset = m_geometries.Count;
+			if (index == 0)
+				return m_axes;
+
+			offset += 1;
+
+			ICadGeometry geom = null;
+			if (index >= offset && index - offset < m_geometries.Count)
+				geom = m_geometries[index - offset];
+
+			offset += m_geometries.Count;
 			if (index >= offset && index - offset < m_grips.Count)
 				return m_grips[index - offset];
 
@@ -395,6 +461,13 @@ namespace simpleCAD
 		#endregion
 
 		//=============================================================================
+		public void Update_CoordinateAxes()
+		{
+			if (m_axes != null)
+				m_axes.Draw();
+		}
+
+		//=============================================================================
 		public static void UpdatePlot()
 		{
 			EventHandler handler = OnUpdatePlotHandler;
@@ -403,6 +476,9 @@ namespace simpleCAD
 		}
 		private void OnUpdatePlot(object sender, EventArgs e)
 		{
+			if (m_axes != null)
+				m_axes.Draw();
+
 			if (m_geometries != null)
 			{
 				foreach (ICadGeometry g in m_geometries)
@@ -494,9 +570,16 @@ namespace simpleCAD
 		}
 		public Point GetLocalPoint(Point globalPnt)
 		{
+			return GetLocalPoint(globalPnt, true);
+		}
+		public Point GetLocalPoint(Point globalPnt, bool bWithScale)
+		{
 			Point tempPnt = globalPnt;
-			tempPnt.X = tempPnt.X * Scale;
-			tempPnt.Y = tempPnt.Y * Scale;
+			if (bWithScale)
+			{
+				tempPnt.X *= Scale;
+				tempPnt.Y *= Scale;
+			}
 
 			tempPnt -= GetOffset();
 
