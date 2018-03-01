@@ -10,5 +10,7 @@ namespace simpleCAD
 	public interface ICoordinateSystem
 	{
 		Point GetLocalPoint(Point globalPnt);
+
+		double Get_Scale();
 	}
 }

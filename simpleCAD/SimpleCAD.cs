@@ -585,5 +585,11 @@ namespace simpleCAD
 
 			return tempPnt;
 		}
+
+		//=============================================================================
+		public double Get_Scale()
+		{
+			return this.Scale;
+		}
 	}
 }

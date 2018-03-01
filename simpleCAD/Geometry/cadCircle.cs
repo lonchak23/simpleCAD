@@ -78,7 +78,10 @@ namespace simpleCAD.Geometry
 				Brush fillBrush = null;
 				if (m_FillColor != Colors.Transparent)
 					fillBrush = new SolidColorBrush(m_FillColor);
-				dc.DrawEllipse(fillBrush, _pen, cs.GetLocalPoint(m_pntCenter), m_rRadius, m_rRadius);
+
+				double rScale = cs.Get_Scale();
+
+				dc.DrawEllipse(fillBrush, _pen, cs.GetLocalPoint(m_pntCenter), m_rRadius * rScale, m_rRadius * rScale);
 			}
 		}
 
