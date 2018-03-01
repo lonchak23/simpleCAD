@@ -77,6 +77,27 @@ namespace simpleCAD
 			AddVisualChild(m_axes);
 			AddLogicalChild(m_axes);
 			m_axes.Draw();
+
+			this.Loaded += SimpleCAD_Loaded;
+		}
+
+		#endregion
+
+		#region EventHandlers
+
+		//=============================================================================
+		private void SimpleCAD_Loaded(object sender, RoutedEventArgs e)
+		{
+			// place (0, 0) point at center of SimpleCAD
+			// You should do it on Loaded event, otherwise ActualHeight and ActualWidth will be 0.
+			double rOffset_X = this.ActualWidth / 2;
+			double rOffset_Y = this.ActualHeight / 2;
+
+			m_OffsetVector.X = -rOffset_X;
+			m_OffsetVector.Y = -rOffset_Y;
+
+			// redraw children
+			UpdatePlot();
 		}
 
 		#endregion
