@@ -20,8 +20,8 @@ namespace simpleCAD.Geometry
 
 		public static string PROP_START_PNT_X = "Start point X";
 		public static string PROP_START_PNT_Y = "Start point Y";
-		public static string PROP_END_PNT_X = "Start end X";
-		public static string PROP_END_PNT_Y = "Start end Y";
+		public static string PROP_END_PNT_X = "End point X";
+		public static string PROP_END_PNT_Y = "End point Y";
 
 		public cadLine() { }
 

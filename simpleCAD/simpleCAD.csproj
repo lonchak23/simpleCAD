@@ -54,6 +54,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Geometry\cadArc.cs" />
     <Compile Include="Geometry\cadCircle.cs" />
     <Compile Include="Geometry\cadEllipse.cs" />
     <Compile Include="Geometry\cadRectangle.cs" />

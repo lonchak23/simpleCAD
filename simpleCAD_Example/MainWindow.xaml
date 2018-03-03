@@ -12,8 +12,8 @@
 	mc:Ignorable="d"
 	
 	Title="MainWindow"
-	Height="350"
-	Width="525">
+	Height="800"
+	Width="900">
 
 	<Window.Resources>
 
@@ -24,6 +24,7 @@
 			<cadGeom:cadCircle />
 			<cadGeom:cadEllipse />
 			<cadGeom:cadRectangle />
+			<cadGeom:cadArc />
 		</x:Array>
 
 	</Window.Resources>

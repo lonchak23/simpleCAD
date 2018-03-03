@@ -70,7 +70,6 @@ namespace simpleCAD.Geometry
 				arrow_Y.Segments.Add(new LineSegment(yPnt2, true));
 
 				PathGeometry pg = new PathGeometry(new[] { arrow_X, arrow_Y });
-				pg.Figures.Add(arrow_Y);
 
 				thisDC.DrawGeometry(br, _pen, pg);
 
