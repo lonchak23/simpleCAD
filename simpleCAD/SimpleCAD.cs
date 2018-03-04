@@ -59,18 +59,6 @@ namespace simpleCAD
 
 		public SimpleCAD()
 		{
-			//
-			// Default WPF coordinate system has Y-axis, directed to down.
-			// So left top corner has(0, 0) coordinate.
-			//
-			// All graphics that i have seen use Y-axis, directed to up.
-			// So left BOT corner has(0, 0) coordinate.
-			//
-			// Lets revert Y - axis.
-			// So all coordinate properties will show default "human" coordinate system.
-			this.RenderTransform = new ScaleTransform(1, -1);
-			this.RenderTransformOrigin = new Point(0.5, 0.5);
-
 			OnUpdatePlotHandler += OnUpdatePlot;
 
 			m_axes = new CoordinateAxes(this);
@@ -95,6 +83,9 @@ namespace simpleCAD
 
 			m_OffsetVector.X = -rOffset_X;
 			m_OffsetVector.Y = -rOffset_Y;
+
+			// read comment in GetLocalPoint()
+			m_OffsetVector.Y *= -1;
 
 			// redraw children
 			UpdatePlot();
@@ -375,6 +366,10 @@ namespace simpleCAD
 			{
 				Point pnt = _GetLocalPoint(e);
 				m_TempOffsetVector = (m_MiddleBtnPressed_Point - pnt);
+
+				// read comment in GetLocalPoint()
+				m_TempOffsetVector.Y *= -1;
+
 				UpdatePlot();
 				return;
 			}
@@ -472,7 +467,16 @@ namespace simpleCAD
 			// Need to save cursor position - cursor should been placed over same point in global coordiantes.
 			globalPnt_UnderMouse.X *= Scale;
 			globalPnt_UnderMouse.Y *= Scale;
+
+			// reverse Y
+			// read comment in GetLocalPoint()
+			globalPnt_UnderMouse.Y *= -1;
+
 			m_OffsetVector = globalPnt_UnderMouse - localPnt_UnderMouse;
+			
+			// reverse Y
+			m_OffsetVector.Y *= -1;
+
 			m_TempOffsetVector.X = 0;
 			m_TempOffsetVector.Y = 0;
 
@@ -578,7 +582,14 @@ namespace simpleCAD
 		}
 		private Point _GetGlobalPoint(Point localPnt)
 		{
-			Point tempPnt = localPnt + GetOffset();
+			Point tempPnt = localPnt;
+
+			// reverse Y
+			// read comment in GetLocalPoint()
+			tempPnt.Y *= -1;
+
+			tempPnt += GetOffset();
+
 			tempPnt.X = tempPnt.X / Scale;
 			tempPnt.Y = tempPnt.Y / Scale;
 			return tempPnt;
@@ -603,6 +614,27 @@ namespace simpleCAD
 			}
 
 			tempPnt -= GetOffset();
+
+			//
+			// Default WPF coordinate system has Y-axis, directed to down.
+			// So left top corner has(0, 0) coordinate.
+			//
+			// All graphics that i have seen use Y-axis, directed to up.
+			// So left BOT corner has(0, 0) coordinate.
+			//
+			// Lets revert Y - axis.
+			// So all coordinate properties will show default "human" coordinate system.
+			//
+			// ---------------------------------------------------------------------------------------
+			// Another way to solve this problem is applly (Y=-1) render transform to SimpleCAD control.
+			// Something like this:
+			//
+			// this.RenderTransform = new ScaleTransform(1, -1);
+			// this.RenderTransformOrigin = new Point(0.5, 0.5);
+			//
+			// It is much simplier but incorrect. Because all text will have correct (x,y)-point at which he should be drawn,
+			// but it will be drawn with (Y=-1) scaling.
+			tempPnt.Y *= -1;
 
 			return tempPnt;
 		}

@@ -65,7 +65,7 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		public void Draw(ICoordinateSystem cs, DrawingContext dc)
 		{
-			if (cs != null && dc != null)
+			if (cs != null && dc != null && m_bFirstPnt_Setted)
 			{
 				Pen _pen = new Pen(new SolidColorBrush(m_Color), m_Thickness);
 				dc.DrawLine(_pen, cs.GetLocalPoint(m_FirstPnt), cs.GetLocalPoint(m_SecondPnt));
