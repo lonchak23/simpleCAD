@@ -77,10 +77,18 @@ namespace simpleCAD.Geometry
 				// Draw text
 				FontFamily ff = new FontFamily("Arial");
 				Typeface tf = new Typeface(ff, FontStyles.Normal, FontWeights.Normal, FontStretches.Normal);
+
 				FormattedText text_X = new FormattedText("X", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, tf, m_owner.AxesTextSize, br);
-				thisDC.DrawText(text_X, xPnt - 1.3 * m_owner.AxesTextSize * new Vector(0.0, 1.0));
+				// Positive Y direction because default WPF axes have Y directed to bottom.
+				// Here we draw in default WPF system.
+				// Read coom in SimpleCAD.GetLocalPoint().
+				thisDC.DrawText(text_X, xPnt + new Vector(0, 3));
+
 				FormattedText text_Y = new FormattedText("Y", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, tf, m_owner.AxesTextSize, br);
-				thisDC.DrawText(text_Y, yPnt - 1.3*m_owner.AxesTextSize * new Vector(1.0, 0.0));
+				// Negative Y direction because default WPF axes have Y directed to bottom.
+				// Here we draw in default WPF system.
+				// Read coom in SimpleCAD.GetLocalPoint().
+				thisDC.DrawText(text_Y, yPnt + new Vector(-m_owner.AxesTextSize, -m_owner.AxesTextSize));
 			}
 		}
 	}
