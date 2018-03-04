@@ -163,26 +163,23 @@ namespace simpleCAD.Geometry
 							if(rSecondAngle > rThirdAngle)
 							{
 								endPnt = m_ThirdPnt;
-								//sd = SweepDirection.Clockwise;
-								sd = SweepDirection.Counterclockwise;
+								sd = SweepDirection.Clockwise;
+								//sd = SweepDirection.Counterclockwise;
 								bIsLargeArc = (rFirstAngle - rThirdAngle) >= Math.PI;
 							}
 							else
 							{
 								endPnt = m_ThirdPnt;
-								//sd = SweepDirection.Counterclockwise;
-								sd = SweepDirection.Clockwise;
+								sd = SweepDirection.Counterclockwise;
+								//sd = SweepDirection.Clockwise;
 								bIsLargeArc = (2*Math.PI - (rFirstAngle - rThirdAngle)) >= Math.PI;
 							}
 						}
 						else
 						{
 							endPnt = m_ThirdPnt;
-							//??
-							// Cant understand why is it counterclockwise.
-							// Probably it is result of Y=-1 scaling of simpleCAD.
-							//sd = SweepDirection.Clockwise;
-							sd = SweepDirection.Counterclockwise;
+							sd = SweepDirection.Clockwise;
+							//sd = SweepDirection.Counterclockwise;
 
 							double rDiff = rFirstAngle - rThirdAngle;
 							rDiff += 2*Math.PI;
@@ -194,8 +191,8 @@ namespace simpleCAD.Geometry
 						if(rFirstAngle > rThirdAngle)
 						{
 							endPnt = m_ThirdPnt;
-							//sd = SweepDirection.Counterclockwise;
-							sd = SweepDirection.Clockwise;
+							sd = SweepDirection.Counterclockwise;
+							//sd = SweepDirection.Clockwise;
 
 							double rDiff = rFirstAngle - rThirdAngle;
 							rDiff -= 2 * Math.PI;
@@ -206,8 +203,8 @@ namespace simpleCAD.Geometry
 							if(rSecondAngle > rThirdAngle)
 							{
 								endPnt = m_ThirdPnt;
-								//sd = SweepDirection.Clockwise;
-								sd = SweepDirection.Counterclockwise;
+								sd = SweepDirection.Clockwise;
+								//sd = SweepDirection.Counterclockwise;
 
 								double rDiff = rFirstAngle - rThirdAngle;
 								rDiff += 2 * Math.PI;
@@ -216,8 +213,8 @@ namespace simpleCAD.Geometry
 							else
 							{
 								endPnt = m_ThirdPnt;
-								//sd = SweepDirection.Counterclockwise;
-								sd = SweepDirection.Clockwise;
+								sd = SweepDirection.Counterclockwise;
+								//sd = SweepDirection.Clockwise;
 
 								double rDiff = rFirstAngle - rThirdAngle;
 								//if (true || rDiff > 0)
