@@ -24,6 +24,8 @@ namespace simpleCAD
 		void OnMouseLeftButtonClick(Point globalPoint);
 		void OnMouseMove(Point globalPoint);
 
+		void OnKeyDown(System.Windows.Input.KeyEventArgs e);
+
 		object GetPropertyValue(string strPropSysName);
 		bool SetPropertyValue(string strPropSysName, object propValue);
 

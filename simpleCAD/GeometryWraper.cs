@@ -21,13 +21,14 @@ namespace simpleCAD
 		public static string sDisplayName = "geometryWrapper";
 		public string DisplayName { get { return sDisplayName; } }
 
-		//---------------------------------------------------------
+		//=============================================================================
 		private SimpleCAD m_owner = null;
 		public SimpleCAD Owner { get { return m_owner; } }
-		//---------------------------------------------------------
+		//=============================================================================
 		private ICadGeometry m_geometry = null;
 		public ICadGeometry Geometry { get { return m_geometry; } }
-		
+
+		//=============================================================================
 		public bool IsPlaced
 		{
 			get
@@ -37,6 +38,8 @@ namespace simpleCAD
 				return true;
 			}
 		}
+
+		//=============================================================================
 		public List<Property_ViewModel> Properties
 		{
 			get
@@ -45,6 +48,7 @@ namespace simpleCAD
 			}
 		}
 
+		//=============================================================================
 		public void Draw(ICoordinateSystem cs, DrawingContext dc)
 		{
 			if(m_geometry != null)
@@ -56,13 +60,17 @@ namespace simpleCAD
 			}
 		}
 
+		//=============================================================================
 		public DrawingVisual GetGeometryWrapper() { return this; }
 
+		//=============================================================================
 		public void OnMouseLeftButtonClick(Point globalPoint)
 		{
 			if (m_geometry != null)
 				m_geometry.OnMouseLeftButtonClick(globalPoint);
 		}
+
+		//=============================================================================
 		public void OnMouseMove(Point globalPoint)
 		{
 			if (m_geometry != null)
@@ -71,6 +79,15 @@ namespace simpleCAD
 				Draw(m_owner, null);
 			}
 		}
+
+		//=============================================================================
+		public void OnKeyDown(System.Windows.Input.KeyEventArgs e)
+		{
+			if (m_geometry != null)
+				m_geometry.OnKeyDown(e);
+		}
+
+		//=============================================================================
 		public List<Point> GetGripPoints()
 		{
 			if (m_geometry != null)
@@ -78,6 +95,8 @@ namespace simpleCAD
 
 			return new List<Point>();
 		}
+
+		//=============================================================================
 		public bool SetGripPoint(int gripIndex, Point pnt)
 		{
 			if (m_geometry != null && m_owner != null)
@@ -90,6 +109,7 @@ namespace simpleCAD
 			return false;
 		}
 
+		//=============================================================================
 		public object GetPropertyValue(string strPropSysName)
 		{
 			if (m_geometry != null)
@@ -97,6 +117,8 @@ namespace simpleCAD
 
 			return null;
 		}
+
+		//=============================================================================
 		public bool SetPropertyValue(string strPropSysName, object propValue)
 		{
 			if (m_geometry != null)
@@ -109,12 +131,14 @@ namespace simpleCAD
 			return false;
 		}
 
+		//=============================================================================
 		public void OnPropertyChanged()
 		{
 			if (m_geometry != null)
 				Draw(m_owner, null);
 		}
 
+		//=============================================================================
 		public ICadGeometry Clone()
 		{
 			ICadGeometry cloneGeom = null;

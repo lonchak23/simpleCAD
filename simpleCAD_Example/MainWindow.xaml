@@ -43,7 +43,7 @@
 		</StackPanel>
 
 		<sCAD:SimpleCAD
-			x:Name="DH"
+			x:Name="sCAD"
 			Grid.Row="0"
 			VerticalAlignment="Stretch"
 			HorizontalAlignment="Stretch"/>
@@ -54,7 +54,7 @@
 			HorizontalAlignment="Right"
 			Grid.IsSharedSizeScope="True"
 			Background="Aqua"
-			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=DH}">
+			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=sCAD}">
 			<ListBox.Resources>
 				<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
 					<TextBox
@@ -105,7 +105,7 @@
 				<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
 					<local:GeometryCheckbox
 						Content="{Binding DisplayName}"
-						TargetGeometry="{Binding Path=GeometryToCreate, ElementName=DH, Mode=TwoWay}"
+						TargetGeometry="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"
 						Background="Bisque"/>
 				</DataTemplate>
 			</ListBox.ItemTemplate>

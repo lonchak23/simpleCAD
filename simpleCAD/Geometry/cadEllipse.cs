@@ -82,6 +82,9 @@ namespace simpleCAD.Geometry
 		}
 
 		//=============================================================================
+		public void OnKeyDown(System.Windows.Input.KeyEventArgs e) { }
+
+		//=============================================================================
 		public void Draw(ICoordinateSystem cs, DrawingContext dc)
 		{
 			if (!m_bCenter_IsSetted)

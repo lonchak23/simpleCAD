@@ -130,6 +130,9 @@ namespace simpleCAD.Geometry
 		}
 
 		//=============================================================================
+		public void OnKeyDown(System.Windows.Input.KeyEventArgs e) { }
+
+		//=============================================================================
 		public void Draw(ICoordinateSystem cs, DrawingContext dc)
 		{
 			if (cs != null && dc != null && m_bFirstPnt_IsSetted)

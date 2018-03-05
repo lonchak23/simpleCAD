@@ -234,20 +234,7 @@ namespace simpleCAD
 		}
 		public void On_GeometryToCreate_Changed()
 		{
-			//
-			SelectedGeometry = null;
-
-			// delete last not initialized
-			if (m_NewGeometry != null)
-			{
-				DrawingVisual dc = m_NewGeometry.GetGeometryWrapper();
-				RemoveVisualChild(dc);
-				RemoveLogicalChild(dc);
-				m_geometries.Remove(m_NewGeometry);
-			}
-
-			m_gripToMove = null;
-			ClearGrips();
+			_Cancel();
 		}
 
 		//=============================================================================
@@ -643,6 +630,36 @@ namespace simpleCAD
 		public double Get_Scale()
 		{
 			return this.Scale;
+		}
+
+		//=============================================================================
+		public void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			if (Key.Escape == e.Key)
+				_Cancel();
+			else if (SelectedGeometry != null)
+				SelectedGeometry.OnKeyDown(e);
+			else if (m_NewGeometry != null)
+				m_NewGeometry.OnKeyDown(e);
+		}
+
+		//=============================================================================
+		private void _Cancel()
+		{
+			//
+			SelectedGeometry = null;
+
+			// delete last not initialized
+			if (m_NewGeometry != null)
+			{
+				DrawingVisual dc = m_NewGeometry.GetGeometryWrapper();
+				RemoveVisualChild(dc);
+				RemoveLogicalChild(dc);
+				m_geometries.Remove(m_NewGeometry);
+			}
+
+			m_gripToMove = null;
+			ClearGrips();
 		}
 	}
 }

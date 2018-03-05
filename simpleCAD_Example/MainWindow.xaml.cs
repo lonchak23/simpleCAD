@@ -10,6 +10,14 @@ namespace simpleCAD_Example
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			this.KeyDown += MainWindow_KeyDown;
+		}
+
+		//=============================================================================
+		private void MainWindow_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+		{
+			sCAD.OnKeyDown(sender, e);
 		}
 	}
 }
