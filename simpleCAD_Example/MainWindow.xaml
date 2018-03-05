@@ -25,6 +25,7 @@
 			<cadGeom:cadEllipse />
 			<cadGeom:cadRectangle />
 			<cadGeom:cadArc />
+			<cadGeom:cadPolyline />
 		</x:Array>
 
 	</Window.Resources>

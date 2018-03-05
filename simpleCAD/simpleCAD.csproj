@@ -57,6 +57,7 @@
     <Compile Include="Geometry\cadArc.cs" />
     <Compile Include="Geometry\cadCircle.cs" />
     <Compile Include="Geometry\cadEllipse.cs" />
+    <Compile Include="Geometry\cadPolyline.cs" />
     <Compile Include="Geometry\cadRectangle.cs" />
     <Compile Include="Geometry\CoordinateAxes.cs" />
     <Compile Include="Utils.cs" />

@@ -640,7 +640,15 @@ namespace simpleCAD
 			else if (SelectedGeometry != null)
 				SelectedGeometry.OnKeyDown(e);
 			else if (m_NewGeometry != null)
+			{
 				m_NewGeometry.OnKeyDown(e);
+
+				if (m_NewGeometry.IsPlaced)
+				{
+					m_NewGeometry.Draw(this, null);
+					m_NewGeometry = null;
+				}
+			}
 		}
 
 		//=============================================================================
