@@ -664,6 +664,8 @@ namespace simpleCAD
 				RemoveVisualChild(dc);
 				RemoveLogicalChild(dc);
 				m_geometries.Remove(m_NewGeometry);
+
+				m_NewGeometry = null;
 			}
 
 			m_gripToMove = null;
