@@ -1,15 +1,18 @@
 ﻿using simpleCAD.Geometry;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Media;
 
 namespace simpleCAD
 {
+	[Serializable]
 	/// <summary>
 	/// DrawingVisual wrap around ICadGeometry.
 	/// DrawingVisual.DrawingContext need for drawing ICadGeometry.
 	/// </summary>
-	internal class GeometryWraper : DrawingVisual, ICadGeometry
+	internal class GeometryWraper : DrawingVisual, ICadGeometry, ISerializable
 	{
 		public GeometryWraper(SimpleCAD owner, ICadGeometry geom)
 		{
@@ -23,7 +26,7 @@ namespace simpleCAD
 
 		//=============================================================================
 		private SimpleCAD m_owner = null;
-		public SimpleCAD Owner { get { return m_owner; } }
+		public SimpleCAD Owner { get { return m_owner; } set { m_owner = value; } }
 		//=============================================================================
 		private ICadGeometry m_geometry = null;
 		public ICadGeometry Geometry { get { return m_geometry; } }
@@ -146,6 +149,21 @@ namespace simpleCAD
 				cloneGeom = m_geometry.Clone();
 
 			return new GeometryWraper(m_owner, cloneGeom);
+		}
+
+		//=============================================================================
+		// Implement this method to serialize data. The method is called 
+		// on serialization.
+		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue("m_geometry", m_geometry);
+		}
+
+		//=============================================================================
+		// The special constructor is used to deserialize values.
+		public GeometryWraper(SerializationInfo info, StreamingContext context)
+		{
+			m_geometry = (ICadGeometry)info.GetValue("m_geometry", typeof(ICadGeometry));
 		}
 	}
 }

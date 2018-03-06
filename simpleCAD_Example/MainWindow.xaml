@@ -36,18 +36,25 @@
 			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
-		<StackPanel
-			Grid.Row="0"
-			Orientation="Vertical">
-			<Button Content="OK" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-			<Button Content="OK2" VerticalAlignment="Top" HorizontalAlignment="Left"/>
-		</StackPanel>
-
 		<sCAD:SimpleCAD
 			x:Name="sCAD"
 			Grid.Row="0"
 			VerticalAlignment="Stretch"
 			HorizontalAlignment="Stretch"/>
+
+		<StackPanel
+			Orientation="Vertical">
+			<Button
+				Content="Save"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Left"
+				Click="SaveButton_Click"/>
+			<Button
+				Content="Open"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Left"
+				Click="OpenButton_Click"/>
+		</StackPanel>
 
 		<ListBox
 			Grid.Row="0"

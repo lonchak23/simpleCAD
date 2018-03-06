@@ -537,6 +537,7 @@ namespace simpleCAD.Geometry
 		{
 			info.AddValue("m_FirstPnt", m_FirstPnt);
 			info.AddValue("m_SecondPnt", m_SecondPnt);
+			info.AddValue("m_ThirdPnt", m_ThirdPnt);
 			info.AddValue("m_CenterPnt", m_CenterPnt);
 			info.AddValue("m_rRadius", m_rRadius);
 
@@ -557,6 +558,7 @@ namespace simpleCAD.Geometry
 		{
 			m_FirstPnt = (Point)info.GetValue("m_FirstPnt", typeof(Point));
 			m_SecondPnt = (Point)info.GetValue("m_SecondPnt", typeof(Point));
+			m_ThirdPnt = (Point)info.GetValue("m_ThirdPnt", typeof(Point));
 			m_CenterPnt = (Point)info.GetValue("m_CenterPnt", typeof(Point));
 			m_rRadius = (double)info.GetValue("m_rRadius", typeof(double));
 
