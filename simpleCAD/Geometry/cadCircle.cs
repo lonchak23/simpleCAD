@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace simpleCAD.Geometry
 {
@@ -28,6 +29,26 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		private static string sDisplayName = "cadCircle";
 		public string DisplayName { get { return sDisplayName; } }
+
+		//=============================================================================
+		private ImageSource m_Image = null;
+		public ImageSource GeomImage
+		{
+			get
+			{
+				if (m_Image == null)
+				{
+					BitmapImage logo = new BitmapImage();
+					logo.BeginInit();
+					logo.UriSource = new Uri("pack://application:,,,/simpleCAD;component/Images/img_circle.png");
+					logo.EndInit();
+
+					m_Image = logo;
+				}
+
+				return m_Image;
+			}
+		}
 
 		//=============================================================================
 		public DrawingVisual GetGeometryWrapper() { return null; }
@@ -232,6 +253,20 @@ namespace simpleCAD.Geometry
 			}
 
 			return false;
+		}
+
+		//=============================================================================
+		public ITooltip Tooltip
+		{
+			get
+			{
+				if (!m_bCenter_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input center point", TooltipType.eTooltip);
+				else if (!m_bRadius_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Select radius", TooltipType.eTooltip);
+
+				return null;
+			}
 		}
 
 		//=============================================================================

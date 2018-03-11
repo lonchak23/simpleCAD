@@ -58,6 +58,12 @@ namespace simpleCAD
 				typeof(double),
 				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(1.0, On_Scale_Changed));
+
+			SimpleCAD.cadToolTipProperty = DependencyProperty.Register(
+				"cadToolTip",
+				typeof(ITooltip),
+				typeof(SimpleCAD),
+				new FrameworkPropertyMetadata(null));
 		}
 
 		public SimpleCAD()
@@ -238,10 +244,20 @@ namespace simpleCAD
 		public void On_GeometryToCreate_Changed()
 		{
 			_Cancel();
+
+			_CloneGeom();
 		}
 
 		//=============================================================================
 		private static event EventHandler OnUpdatePlotHandler;
+
+		//=============================================================================
+		public static readonly DependencyProperty cadToolTipProperty;
+		public ITooltip cadToolTip
+		{
+			get { return (ITooltip)GetValue(SimpleCAD.cadToolTipProperty); }
+			set { SetValue(SimpleCAD.cadToolTipProperty, value); }
+		}
 
 		#endregion
 
@@ -295,32 +311,17 @@ namespace simpleCAD
 
 			Point globalPnt = _GetGlobalPoint(e);
 
-			// Clone new geometry and add it as a child
-			if(m_NewGeometry == null)
-			{
-				ICadGeometry geomToCreate = GeometryToCreate;
-				if(geomToCreate != null)
-				{
-					ICadGeometry geomCopy = geomToCreate.Clone();
-					if (geomCopy != null)
-					{
-						m_NewGeometry = new GeometryWraper(this, geomCopy);
-						DrawingVisual dv = m_NewGeometry.GetGeometryWrapper();
-
-						m_geometries.Add(m_NewGeometry);
-						AddVisualChild(dv);
-						AddLogicalChild(dv);
-					}
-				}
-			}
-
 			if(m_NewGeometry != null)
 			{
 				m_NewGeometry.OnMouseLeftButtonClick(globalPnt);
+				this.cadToolTip = m_NewGeometry.Tooltip;
 				if (m_NewGeometry.IsPlaced)
 				{
 					m_NewGeometry.Draw(this, null);
 					m_NewGeometry = null;
+
+					// start new geom
+					_CloneGeom();
 				}
 			}
 			else
@@ -652,6 +653,9 @@ namespace simpleCAD
 				{
 					m_NewGeometry.Draw(this, null);
 					m_NewGeometry = null;
+
+					// start new geom
+					_CloneGeom();
 				}
 			}
 		}
@@ -659,6 +663,8 @@ namespace simpleCAD
 		//=============================================================================
 		private void _Cancel()
 		{
+			this.cadToolTip = null;
+
 			//
 			SelectedGeometry = null;
 
@@ -678,8 +684,35 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
+		private void _CloneGeom()
+		{
+			// Clone new geometry and add it as a child
+			if (m_NewGeometry == null)
+			{
+				ICadGeometry geomToCreate = GeometryToCreate;
+				if (geomToCreate != null)
+				{
+					ICadGeometry geomCopy = geomToCreate.Clone();
+					if (geomCopy != null)
+					{
+						m_NewGeometry = new GeometryWraper(this, geomCopy);
+						DrawingVisual dv = m_NewGeometry.GetGeometryWrapper();
+
+						m_geometries.Add(m_NewGeometry);
+						AddVisualChild(dv);
+						AddLogicalChild(dv);
+
+						this.cadToolTip = m_NewGeometry.Tooltip;
+					}
+				}
+			}
+		}
+
+		//=============================================================================
 		private void _ClearAll()
 		{
+			this.cadToolTip = null;
+
 			//
 			foreach (ICadGeometry geom in m_geometries)
 			{

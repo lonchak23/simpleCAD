@@ -11,6 +11,19 @@
 	
 	mc:Ignorable="d"
 	
+	
+	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+	
+	TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+	TextElement.FontWeight="Medium"
+	TextElement.FontSize="14"
+	TextOptions.TextFormattingMode="Ideal" 
+	TextOptions.TextRenderingMode="Auto"        
+	
+	Background="{DynamicResource MaterialDesignPaper}"
+	FontFamily="{DynamicResource MaterialDesignFont}"
+	
+	
 	Title="MainWindow"
 	Height="800"
 	Width="900">
@@ -33,7 +46,6 @@
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
-			<RowDefinition Height="Auto"/>
 		</Grid.RowDefinitions>
 
 		<sCAD:SimpleCAD
@@ -100,7 +112,8 @@
 		</ListBox>
 
 		<ListBox
-			Grid.Row="1"
+			Width="100"
+			HorizontalAlignment="Right"
 			ItemsSource="{StaticResource GeometryTypes}">
 
 			<ListBox.ItemsPanel>
@@ -118,5 +131,79 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
+
+		<Grid
+			Margin="16, 0, 16, 8"
+			VerticalAlignment="Bottom">
+
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="Auto"/>
+			</Grid.ColumnDefinitions>
+
+			<Grid.RowDefinitions>
+				<RowDefinition Height="64"/>
+			</Grid.RowDefinitions>
+
+			<materialDesign:Card
+				VerticalAlignment="Stretch"
+				DataContext="{Binding Path=cadToolTip, ElementName=sCAD}">
+
+				<materialDesign:Card.Style>
+					<Style TargetType="{x:Type materialDesign:Card}">
+						<Setter Property="Visibility" Value="Visible"/>
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding Path=cadToolTip, ElementName=sCAD}" Value="{x:Null}">
+								<Setter Property="Visibility" Value="Hidden"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</materialDesign:Card.Style>
+
+				<Grid
+					VerticalAlignment="Center">
+
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+
+					<Image
+						Grid.Row="0"
+						Grid.RowSpan="2"
+						
+						Margin="16, 3, 0, 3"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						
+						Stretch="None"
+						StretchDirection="DownOnly"
+						Source="{Binding Path=Image, Mode=OneWay}"/>
+					<TextBlock
+						Grid.Row="0"
+						
+						Margin="56, 3, 16, 0"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						
+						Style="{DynamicResource MaterialDesignSubheadingTextBlock}"
+						Text="{Binding Path=Header}"/>
+
+					<TextBlock
+						Grid.Row="1"
+						
+						Margin="56, 0, 16, 3"
+						HorizontalAlignment="Left"
+						VerticalAlignment="Center"
+						
+						Style="{DynamicResource MaterialDesignBody1TextBlock}"
+						Foreground="{DynamicResource MaterialDesignBodyLight}"
+						Text="{Binding Path=TooltipText}"/>
+
+				</Grid>
+				
+			</materialDesign:Card>
+			
+		</Grid>
 	</Grid>
 </Window>

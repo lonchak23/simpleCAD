@@ -25,6 +25,18 @@ namespace simpleCAD
 		public string DisplayName { get { return sDisplayName; } }
 
 		//=============================================================================
+		public ImageSource GeomImage
+		{
+			get
+			{
+				if (m_geometry != null)
+					return m_geometry.GeomImage;
+
+				return null;
+			}
+		}
+
+		//=============================================================================
 		private SimpleCAD m_owner = null;
 		public SimpleCAD Owner { get { return m_owner; } set { m_owner = value; } }
 		//=============================================================================
@@ -164,6 +176,18 @@ namespace simpleCAD
 		public GeometryWraper(SerializationInfo info, StreamingContext context)
 		{
 			m_geometry = (ICadGeometry)info.GetValue("m_geometry", typeof(ICadGeometry));
+		}
+
+		//=============================================================================
+		public ITooltip Tooltip
+		{
+			get
+			{
+				if (m_geometry != null)
+					return m_geometry.Tooltip;
+
+				return null;
+			}
 		}
 	}
 }

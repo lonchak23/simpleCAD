@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace simpleCAD.Geometry
 {
@@ -84,6 +85,26 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		public static string sDisplayName = "cadArc";
 		public string DisplayName { get { return sDisplayName; } }
+
+		//=============================================================================
+		private ImageSource m_Image = null;
+		public ImageSource GeomImage
+		{
+			get
+			{
+				if (m_Image == null)
+				{
+					BitmapImage logo = new BitmapImage();
+					logo.BeginInit();
+					logo.UriSource = new Uri("pack://application:,,,/simpleCAD;component/Images/img_arc.png");
+					logo.EndInit();
+
+					m_Image = logo;
+				}
+
+				return m_Image;
+			}
+		}
 
 		//=============================================================================
 		public bool IsPlaced
@@ -522,6 +543,22 @@ namespace simpleCAD.Geometry
 			}
 
 			return false;
+		}
+
+		//=============================================================================
+		public ITooltip Tooltip
+		{
+			get
+			{
+				if (!m_bFirstPnt_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input first point", TooltipType.eTooltip);
+				else if (!m_bSecondPnt_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input second point", TooltipType.eTooltip);
+				else if (!m_bThirdPnt_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input third point", TooltipType.eTooltip);
+
+				return null;
+			}
 		}
 
 		//=============================================================================

@@ -40,6 +40,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -60,6 +61,8 @@
     <Compile Include="Geometry\cadPolyline.cs" />
     <Compile Include="Geometry\cadRectangle.cs" />
     <Compile Include="Geometry\CoordinateAxes.cs" />
+    <Compile Include="Interfaces\ITooltip.cs" />
+    <Compile Include="Tooltip.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="BaseViewModel.cs" />
     <Compile Include="SimpleCAD.cs" />
@@ -86,14 +89,34 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\img_circle.png" />
+    <Resource Include="Images\img_line.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Imafe_Circle.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\img_arc.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\img_ellipse.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\img_polyline.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\img_rectangle.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

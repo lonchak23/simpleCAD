@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace simpleCAD.Geometry
 {
@@ -30,6 +31,26 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		private static string sDisplayName = "cadEllipse";
 		public string DisplayName { get { return sDisplayName; } }
+
+		//=============================================================================
+		private ImageSource m_Image = null;
+		public ImageSource GeomImage
+		{
+			get
+			{
+				if (m_Image == null)
+				{
+					BitmapImage logo = new BitmapImage();
+					logo.BeginInit();
+					logo.UriSource = new Uri("pack://application:,,,/simpleCAD;component/Images/img_ellipse.png");
+					logo.EndInit();
+
+					m_Image = logo;
+				}
+
+				return m_Image;
+			}
+		}
 
 		//=============================================================================
 		public DrawingVisual GetGeometryWrapper() { return null; }
@@ -268,6 +289,22 @@ namespace simpleCAD.Geometry
 			}
 
 			return false;
+		}
+
+		//=============================================================================
+		public ITooltip Tooltip
+		{
+			get
+			{
+				if (!m_bCenter_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input center point", TooltipType.eTooltip);
+				else if (!m_bRadiusX_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input X radius", TooltipType.eTooltip);
+				else if (!m_bRadiusY_IsSetted)
+					return new Tooltip(sDisplayName, GeomImage, "Input Y radius", TooltipType.eTooltip);
+
+				return null;
+			}
 		}
 
 		//=============================================================================

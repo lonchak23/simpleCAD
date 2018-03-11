@@ -12,6 +12,8 @@ namespace simpleCAD
 	{
 		string DisplayName { get; }
 
+		ImageSource GeomImage { get; }
+
 		bool IsPlaced { get; }
 		List<Property_ViewModel> Properties { get; }
 
@@ -28,6 +30,8 @@ namespace simpleCAD
 
 		object GetPropertyValue(string strPropSysName);
 		bool SetPropertyValue(string strPropSysName, object propValue);
+
+		ITooltip Tooltip { get; }
 
 		/// <summary>
 		/// Need for realization "Prototype" pattern.
