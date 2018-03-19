@@ -104,9 +104,6 @@
     <Resource Include="Images\img_line.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Imafe_Circle.bmp" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Images\img_arc.png" />
   </ItemGroup>
   <ItemGroup>
@@ -117,6 +114,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\img_rectangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

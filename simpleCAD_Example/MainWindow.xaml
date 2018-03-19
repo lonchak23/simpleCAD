@@ -5,6 +5,7 @@
 	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:local="clr-namespace:simpleCAD_Example"
+	xmlns:local_controls="clr-namespace:simpleCAD_Example.Controls"
 	
 	xmlns:sCAD="clr-namespace:simpleCAD;assembly=simpleCAD"
 	xmlns:cadGeom="clr-namespace:simpleCAD.Geometry;assembly=simpleCAD"
@@ -68,6 +69,44 @@
 				Click="OpenButton_Click"/>
 		</StackPanel>
 
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto"/>
+				<RowDefinition Height="Auto"/>
+			</Grid.RowDefinitions>
+
+			<!-- 0 TABS-->
+			<materialDesign:Card
+				materialDesign:ShadowAssist.ShadowDepth="Depth4"/>
+
+			<!-- 1 GEOMETRY-->
+			<local_controls:GeometryListBox
+				Margin="16, 3, 16, 3"
+				Grid.Row="1"
+				Style="{StaticResource MaterialDesignToolToggleListBox}"
+				ItemsSource="{StaticResource GeometryTypes}">
+
+				<local_controls:GeometryListBox.ItemContainerStyle>
+					<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
+						<Setter Property="TargetGeometry" Value="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"/>
+					</Style>
+				</local_controls:GeometryListBox.ItemContainerStyle>
+
+				<ListBox.ItemTemplate>
+					<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
+
+						<Image
+							ToolTip="{Binding DisplayName, Mode=OneWay}"
+							Stretch="None"
+							Source="{Binding GeomImage, Mode=OneWay}"/>
+
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+
+			</local_controls:GeometryListBox>
+
+		</Grid>
+
 		<ListBox
 			Grid.Row="0"
 			VerticalAlignment="Top"
@@ -111,6 +150,7 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 
+		<!--
 		<ListBox
 			Width="100"
 			HorizontalAlignment="Right"
@@ -131,6 +171,7 @@
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
+		-->
 
 		<Grid
 			Margin="16, 0, 16, 8"
