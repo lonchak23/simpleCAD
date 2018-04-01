@@ -74,7 +74,23 @@ namespace simpleCAD_Example.Controls
 		//=============================================================================
 		public void OnTargetGeometryChanged(ICadGeometry newTargetGeometry)
 		{
-			if (_GetGeometry() != newTargetGeometry)
+			//
+			// Dont comare like
+			// _GetGeometry() != newTargetGeometry
+			//
+			// because its comparsion of instances. If i get deep clone copy of instance(serialize - deserialize)
+			// and then comapre it with original it will be not equal instances.
+			// So its need to compare DisplayName or some unique ICadGeometry identificator.
+			string thisGeomName = string.Empty;
+			ICadGeometry thisGeom = _GetGeometry();
+			if (thisGeom != null)
+				thisGeomName = thisGeom.DisplayName;
+
+			string targetGeomName = string.Empty;
+			if (newTargetGeometry != null)
+				targetGeomName = newTargetGeometry.DisplayName;
+
+			if (thisGeomName != targetGeomName)
 				this.IsSelected = false;
 			else
 				this.IsSelected = true;

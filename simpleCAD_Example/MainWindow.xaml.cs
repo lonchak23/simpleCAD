@@ -1,4 +1,7 @@
-﻿using System;
+﻿using simpleCAD;
+using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows;
 
 namespace simpleCAD_Example
@@ -8,11 +11,26 @@ namespace simpleCAD_Example
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private MainWindow_ViewModel m_VM = new MainWindow_ViewModel();
+
 		public MainWindow()
 		{
 			InitializeComponent();
 
+			DataContext = m_VM;
+
 			this.KeyDown += MainWindow_KeyDown;
+
+			// add new document on Loaded
+			// Why loaded? - need SimpleCAD control ActualWidth and ActualHeight for correct offset
+			this.Loaded += MainWindow_Loaded;
+		}
+
+		//=============================================================================
+		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+		{
+			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
+			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
 		}
 
 		//=============================================================================
@@ -21,6 +39,7 @@ namespace simpleCAD_Example
 			sCAD.OnKeyDown(sender, e);
 		}
 
+		//=============================================================================
 		private void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
 			// Create SaveFileDialog
@@ -37,10 +56,18 @@ namespace simpleCAD_Example
 			if (result == true)
 			{
 				// save or create
-				sCAD.Save(dlg.FileName);
+				FileStream fs = new FileStream(dlg.FileName, FileMode.OpenOrCreate);
+				if (fs != null)
+				{
+					SimpleCAD_State state = sCAD.GetState();
+
+					BinaryFormatter bf = new BinaryFormatter();
+					bf.Serialize(fs, state);
+				}
 			}
 		}
 
+		//=============================================================================
 		private void OpenButton_Click(object sender, RoutedEventArgs e)
 		{
 			// Create OpenFileDialog
@@ -57,7 +84,14 @@ namespace simpleCAD_Example
 			if (result == true)
 			{
 				// save or create
-				sCAD.Open(dlg.FileName);
+				FileStream fs = new FileStream(dlg.FileName, FileMode.Open);
+				if (fs != null)
+				{
+
+					BinaryFormatter bf = new BinaryFormatter();
+					SimpleCAD_State state = (SimpleCAD_State)bf.Deserialize(fs);
+					sCAD.SetState(state);
+				}
 			}
 		}
 	}

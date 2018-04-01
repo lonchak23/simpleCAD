@@ -62,6 +62,7 @@
     <Compile Include="Geometry\cadRectangle.cs" />
     <Compile Include="Geometry\CoordinateAxes.cs" />
     <Compile Include="Interfaces\ITooltip.cs" />
+    <Compile Include="SimpleCAD_State.cs" />
     <Compile Include="Tooltip.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="BaseViewModel.cs" />

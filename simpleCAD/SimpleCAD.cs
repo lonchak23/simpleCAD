@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.ComponentModel;
+using System.Linq.Expressions;
 
 namespace simpleCAD
 {
@@ -64,6 +66,12 @@ namespace simpleCAD
 				typeof(ITooltip),
 				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(null));
+
+			SimpleCAD.StateProperty = DependencyProperty.Register(
+				"State",
+				typeof(SimpleCAD_State),
+				typeof(SimpleCAD),
+				new FrameworkPropertyMetadata(null, On_State_Changed));
 		}
 
 		public SimpleCAD()
@@ -249,6 +257,27 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
+		public static readonly DependencyProperty StateProperty;
+		public SimpleCAD_State State
+		{
+			get { return (SimpleCAD_State)GetValue(SimpleCAD.StateProperty); }
+			set { SetValue(SimpleCAD.StateProperty, value); }
+		}
+		private static void On_State_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			SimpleCAD dh = d as SimpleCAD;
+			if (dh != null)
+				dh.On_State_Changed(e.NewValue as SimpleCAD_State);
+		}
+		public void On_State_Changed(SimpleCAD_State newState)
+		{
+			if(newState != null)
+			{
+				this.SetState(newState);
+			}
+		}
+
+		//=============================================================================
 		private static event EventHandler OnUpdatePlotHandler;
 
 		//=============================================================================
@@ -320,6 +349,8 @@ namespace simpleCAD
 					m_NewGeometry.Draw(this, null);
 					m_NewGeometry = null;
 
+					_OnCommandEnded();
+
 					// start new geom
 					_CloneGeom();
 				}
@@ -332,6 +363,12 @@ namespace simpleCAD
 				if (m_gripToMove != null)
 				{
 					m_gripToMove = null;
+
+					//
+					// End of grip dragging.
+					// Geometry property was changed.
+					_OnCommandEnded();
+
 					return;
 				}
 
@@ -403,6 +440,8 @@ namespace simpleCAD
 				m_OffsetVector = m_OffsetVector + m_TempOffsetVector;
 				m_TempOffsetVector.X = 0.0;
 				m_TempOffsetVector.Y = 0.0;
+
+				_OnCommandEnded();
 			}
 		}
 
@@ -470,6 +509,8 @@ namespace simpleCAD
 
 			m_TempOffsetVector.X = 0;
 			m_TempOffsetVector.Y = 0;
+
+			_OnCommandEnded();
 
 			UpdatePlot();
 		}
@@ -756,138 +797,72 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		public bool Save(string strFilePath)
+		private void _OnCommandEnded()
 		{
-			FileStream fs = new FileStream(strFilePath, FileMode.OpenOrCreate);
-			if (fs != null)
-			{
-				// get state
-				SimpleCAD_State state = new SimpleCAD_State();
-				state.Geometries = m_geometries;
-				state.OffsetVector = m_OffsetVector;
-
-				state.AxesColor = AxesColor;
-				state.AxesThickness = AxesThickness;
-				state.AxesLength = AxesLength;
-				state.AxesTextSize = AxesTextSize;
-
-				state.Scale = Scale;
-
-				BinaryFormatter bf = new BinaryFormatter();
-				bf.Serialize(fs, state);
-
-				return true;
-			}
-
-			return false;
+			// Update State
+			State = GetState();
 		}
 
 		//=============================================================================
-		public bool Open(string strFilePath)
+		public SimpleCAD_State GetState()
 		{
-			FileStream fs = new FileStream(strFilePath, FileMode.Open);
-			if (fs != null)
+			SimpleCAD_State curentState = new SimpleCAD_State(
+				m_geometries,
+				m_OffsetVector,
+				GeometryToCreate,
+				AxesColor,
+				AxesThickness,
+				AxesLength,
+				AxesTextSize,
+				Scale);
+
+			// return copy of state
+			// dont return curent state, because when call method SimpleCAD._ClearAll m_geometries array will be empty in returned value
+			return Utils.DeepClone<SimpleCAD_State>(curentState);
+		}
+
+		//=============================================================================
+		public bool SetState(SimpleCAD_State state)
+		{
+			_ClearAll();
+
+			if (state == null)
+				return false;
+
+			m_OffsetVector = state.OffsetVector;
+
+			if (state.Geometries != null)
 			{
-				_ClearAll();
-
-				BinaryFormatter bf = new BinaryFormatter();
-				SimpleCAD_State state = (SimpleCAD_State)bf.Deserialize(fs);
-
-				m_OffsetVector = state.OffsetVector;
-
-				if (state.Geometries != null)
+				foreach (ICadGeometry geom in state.Geometries)
 				{
-					foreach (ICadGeometry geom in state.Geometries)
+					GeometryWraper gw = geom.GetGeometryWrapper() as GeometryWraper;
+					if (gw != null)
+						gw.Owner = this;
+					else
+						gw = new GeometryWraper(this, geom);
+
+					if (gw != null)
 					{
-						GeometryWraper gw = geom.GetGeometryWrapper() as GeometryWraper;
-						if (gw != null)
-							gw.Owner = this;
-						else
-							gw = new GeometryWraper(this, geom);
+						AddVisualChild(gw);
+						AddLogicalChild(gw);
 
-						if (gw != null)
-						{
-							AddVisualChild(gw);
-							AddLogicalChild(gw);
-
-							m_geometries.Add(gw);
-						}
+						m_geometries.Add(gw);
 					}
 				}
-
-				AxesColor = state.AxesColor;
-				AxesThickness = state.AxesThickness;
-				AxesLength = state.AxesLength;
-				AxesTextSize = state.AxesTextSize;
-
-				Scale = state.Scale;
-
-				UpdatePlot();
-
-				return true;
 			}
 
-			return false;
-		}
+			AxesColor = state.AxesColor;
+			AxesThickness = state.AxesThickness;
+			AxesLength = state.AxesLength;
+			AxesTextSize = state.AxesTextSize;
 
-		//=============================================================================
-		/// <summary>
-		/// State of SimpleCAD.
-		/// Helper class for serialization\deserialization from file.
-		/// </summary>
-		[Serializable]
-		private class SimpleCAD_State : ISerializable
-		{
-			public SimpleCAD_State() { }
+			Scale = state.Scale;
 
-			public List<ICadGeometry> Geometries { get; set; }
-			public Vector OffsetVector { get; set; }
+			GeometryToCreate = state.GeometryToCreate;
 
-			public Color AxesColor { get; set; }
-			public double AxesThickness { get; set; }
-			public double AxesLength { get; set; }
-			public double AxesTextSize { get; set; }
+			UpdatePlot();
 
-			public double Scale { get; set; }
-
-			//=============================================================================
-			// Implement this method to serialize data. The method is called 
-			// on serialization.
-			public void GetObjectData(SerializationInfo info, StreamingContext context)
-			{
-				info.AddValue("Geometries", Geometries);
-				info.AddValue("OffsetVector", OffsetVector);
-
-				info.AddValue("AxesColor", AxesColor.ToString());
-				info.AddValue("AxesThickness", AxesThickness);
-				info.AddValue("AxesLength", AxesLength);
-				info.AddValue("AxesTextSize", AxesTextSize);
-
-				info.AddValue("Scale", Scale);
-			}
-
-			//=============================================================================
-			// The special constructor is used to deserialize values.
-			public SimpleCAD_State(SerializationInfo info, StreamingContext context)
-			{
-				Geometries = (List<ICadGeometry>)info.GetValue("Geometries", typeof(List<ICadGeometry>));
-				OffsetVector = (Vector)info.GetValue("OffsetVector", typeof(Vector));
-
-				try
-				{
-					AxesColor = (Color)ColorConverter.ConvertFromString((string)info.GetValue("AxesColor", typeof(string)));
-				}
-				catch
-				{
-					AxesColor = Colors.Black;
-				}
-
-				AxesThickness = (double)info.GetValue("AxesThickness", typeof(double));
-				AxesLength = (double)info.GetValue("AxesLength", typeof(double));
-				AxesTextSize = (double)info.GetValue("AxesTextSize", typeof(double));
-
-				Scale = (double)info.GetValue("Scale", typeof(double));
-			}
+			return true;
 		}
 	}
 }
