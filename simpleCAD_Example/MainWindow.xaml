@@ -102,6 +102,12 @@
 						</StackPanel.Resources>
 
 						<Button
+							Click="NewButton_Click">
+							<materialDesign:PackIcon
+								Kind="File" />
+						</Button>
+						
+						<Button
 							Click="OpenButton_Click">
 							<materialDesign:PackIcon
 								Kind="Folder" />

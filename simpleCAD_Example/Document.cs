@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text.RegularExpressions;
 
 namespace simpleCAD_Example
 {
@@ -70,8 +71,19 @@ namespace simpleCAD_Example
 					return m_strNewDocName;
 				}
 
-				// regex and cut only filename
-				return Path;
+				string strDisplayName = Path;
+				try
+				{
+					// regex and cut only filename
+					string strPattern = @"[^\\]+\.scad$";
+					Regex regex = new Regex(strPattern);
+					Match match = regex.Match(Path);
+
+					strDisplayName = match.Value;
+				}
+				catch { }
+
+				return strDisplayName;
 			}
 		}
 

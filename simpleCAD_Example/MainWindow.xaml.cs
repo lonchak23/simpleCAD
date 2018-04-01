@@ -30,7 +30,6 @@ namespace simpleCAD_Example
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
 		{
 			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
-			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
 		}
 
 		//=============================================================================
@@ -96,6 +95,12 @@ namespace simpleCAD_Example
 					m_VM.DocManager.Add(dlg.FileName, state);
 				}
 			}
+		}
+
+		//=============================================================================
+		private void NewButton_Click(object sender, RoutedEventArgs e)
+		{
+			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
 		}
 	}
 }
