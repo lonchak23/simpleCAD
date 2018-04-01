@@ -804,7 +804,7 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		public SimpleCAD_State GetState()
+		private SimpleCAD_State GetState()
 		{
 			SimpleCAD_State curentState = new SimpleCAD_State(
 				m_geometries,
@@ -822,7 +822,7 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		public bool SetState(SimpleCAD_State state)
+		private bool SetState(SimpleCAD_State state)
 		{
 			_ClearAll();
 

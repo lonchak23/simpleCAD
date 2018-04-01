@@ -139,7 +139,11 @@ namespace simpleCAD_Example
 			if (m_states.Count == 0)
 				return false;
 
-			FileStream fs = new FileStream(strPath, FileMode.OpenOrCreate);
+			//
+			if (strPath != Path)
+				Path = strPath;
+
+			FileStream fs = new FileStream(Path, FileMode.OpenOrCreate);
 			if (fs == null)
 				return false;
 
@@ -148,8 +152,15 @@ namespace simpleCAD_Example
 			BinaryFormatter bf = new BinaryFormatter();
 			bf.Serialize(fs, state);
 
-			if (!string.IsNullOrEmpty(strNewPath) && strNewPath != Path)
-				Path = strNewPath;
+			//
+			if (m_states.Count > 1)
+			{
+				m_states.RemoveRange(0, m_states.Count - 1);
+				m_CurrentStateIndex = 0;
+			}
+
+			NotifyPropertyChanged(() => DisplayName);
+			NotifyPropertyChanged(() => ChangesCount);
 
 			return true;
 		}
@@ -189,6 +200,10 @@ namespace simpleCAD_Example
 		}
 
 		//=============================================================================
+		public bool Add(string strPath, SimpleCAD_State state)
+		{
+			return Add(new Document(this, strPath, state));
+		}
 		public bool Add(Document doc)
 		{
 			if (doc == null)

@@ -93,6 +93,7 @@ namespace simpleCAD
 		}
 	}
 
+	[Serializable]
 	public class DefaultState : SimpleCAD_State
 	{
 		public DefaultState(double rControlWidth, double rControlHeight)

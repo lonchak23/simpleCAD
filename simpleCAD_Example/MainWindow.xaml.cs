@@ -42,29 +42,31 @@ namespace simpleCAD_Example
 		//=============================================================================
 		private void SaveButton_Click(object sender, RoutedEventArgs e)
 		{
-			// Create SaveFileDialog
-			Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+			Document curDoc = m_VM.DocManager.CurrentDocument;
+			if (curDoc == null)
+				return;
 
-			// Set filter for file extension and default file extension
-			dlg.DefaultExt = ".scad";
-			dlg.Filter = "SimpleCAD drawings (.scad)|*.scad";
-
-			// Display OpenFileDialog by calling ShowDialog method
-			Nullable<bool> result = dlg.ShowDialog();
-
-			// Get the selected file name and display in a TextBox
-			if (result == true)
+			string strFilePath = string.Empty;
+			if (curDoc.IsItNewDocument)
 			{
-				// save or create
-				FileStream fs = new FileStream(dlg.FileName, FileMode.OpenOrCreate);
-				if (fs != null)
-				{
-					SimpleCAD_State state = sCAD.GetState();
+				// Create SaveFileDialog
+				Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
 
-					BinaryFormatter bf = new BinaryFormatter();
-					bf.Serialize(fs, state);
-				}
+				// Set filter for file extension and default file extension
+				dlg.DefaultExt = ".scad";
+				dlg.Filter = "SimpleCAD drawings (.scad)|*.scad";
+
+				// Display OpenFileDialog by calling ShowDialog method
+				Nullable<bool> result = dlg.ShowDialog();
+
+				// Get the selected file name and display in a TextBox
+				if (result == true)
+					strFilePath = dlg.FileName;
+				else
+					return;
 			}
+
+			curDoc.Save(strFilePath);
 		}
 
 		//=============================================================================
@@ -90,7 +92,8 @@ namespace simpleCAD_Example
 
 					BinaryFormatter bf = new BinaryFormatter();
 					SimpleCAD_State state = (SimpleCAD_State)bf.Deserialize(fs);
-					sCAD.SetState(state);
+
+					m_VM.DocManager.Add(dlg.FileName, state);
 				}
 			}
 		}
