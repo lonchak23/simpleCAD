@@ -19,7 +19,7 @@
 	TextElement.FontWeight="Medium"
 	TextElement.FontSize="14"
 	TextOptions.TextFormattingMode="Ideal" 
-	TextOptions.TextRenderingMode="Auto"        
+	TextOptions.TextRenderingMode="Auto"
 	
 	Background="{DynamicResource MaterialDesignPaper}"
 	FontFamily="{DynamicResource MaterialDesignFont}"
@@ -46,12 +46,13 @@
 
 	</Window.Resources>
 
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+	<materialDesign:DialogHost>
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
 
-		<sCAD:SimpleCAD
+			<sCAD:SimpleCAD
 			x:Name="sCAD"
 			
 			Grid.Row="0"
@@ -61,86 +62,87 @@
 			State="{Binding DocManager.CurrentDocument.CurrentState, Mode=TwoWay}"
 			/>
 
-		<Grid>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
 
-			<!-- 0 TABS-->
-			<materialDesign:Card
+				<!-- 0 TABS-->
+				<materialDesign:Card
 				Grid.Row="0"
 				Margin="8, 3, 8, 3"
 				materialDesign:ShadowAssist.ShadowDepth="Depth4">
 
-				<Grid>
+					<Grid>
 
-					<Grid.RowDefinitions>
-						<RowDefinition Height="auto"/>
-						<RowDefinition Height="auto"/>
-					</Grid.RowDefinitions>
-					
-					<StackPanel
+						<Grid.RowDefinitions>
+							<RowDefinition Height="auto"/>
+							<RowDefinition Height="auto"/>
+						</Grid.RowDefinitions>
+
+						<StackPanel
 						Grid.Row="0"
 						
 						Margin="8, 8, 8, 8"
 						Orientation="Horizontal">
 
-						<StackPanel.Resources>
-							<Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-								<Setter Property="Background" Value="Transparent"/>
-								<Setter Property="BorderBrush" Value="Transparent"/>
-								<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
+							<StackPanel.Resources>
+								<Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+									<Setter Property="Background" Value="Transparent"/>
+									<Setter Property="BorderBrush" Value="Transparent"/>
+									<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
 
-								<Setter Property="Padding" Value="3, 0, 3, 0"/>
-							</Style>
+									<Setter Property="Margin" Value="3, 0, 3, 0"/>
+									<Setter Property="Padding" Value="0"/>
+								</Style>
 
-							<Style TargetType="{x:Type materialDesign:PackIcon}" BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
-								<Setter Property="Width" Value="26"/>
-								<Setter Property="Height" Value="26"/>
-							</Style>
-						</StackPanel.Resources>
+								<Style TargetType="{x:Type materialDesign:PackIcon}" BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
+									<Setter Property="Width" Value="26"/>
+									<Setter Property="Height" Value="26"/>
+								</Style>
+							</StackPanel.Resources>
 
-						<Button
+							<Button
 							Click="NewButton_Click">
-							<materialDesign:PackIcon
+								<materialDesign:PackIcon
 								Kind="File" />
-						</Button>
-						
-						<Button
+							</Button>
+
+							<Button
 							Click="OpenButton_Click">
-							<materialDesign:PackIcon
+								<materialDesign:PackIcon
 								Kind="Folder" />
-						</Button>
+							</Button>
 
-						<Button
+							<Button
 							Click="SaveButton_Click">
-							<materialDesign:PackIcon Kind="ContentSave" />
-						</Button>
+								<materialDesign:PackIcon Kind="ContentSave" />
+							</Button>
 
-					</StackPanel>
+						</StackPanel>
 
-					<ListBox
+						<ListBox
 						Grid.Row="1"
 						SelectedIndex="0"
 						SelectedItem="{Binding DocManager.CurrentDocument, Mode=TwoWay}"
 						ItemsSource="{Binding DocManager.OpenDocuments, Mode=OneWay}">
 
-						<ListBox.ItemsPanel>
-							<ItemsPanelTemplate>
-								<StackPanel Orientation="Horizontal" />
-							</ItemsPanelTemplate>
-						</ListBox.ItemsPanel>
+							<ListBox.ItemsPanel>
+								<ItemsPanelTemplate>
+									<StackPanel Orientation="Horizontal" />
+								</ItemsPanelTemplate>
+							</ListBox.ItemsPanel>
 
-						<ListBox.ItemContainerStyle>
-							<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
-								<!--
+							<ListBox.ItemContainerStyle>
+								<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+									<!--
 								Too big padding on Ripple - wrap around ListBoxItemTemplate. Disable it.
 								I want draw selection line at ListBoxItem bottom without any padding.
 								Look at ItemTemplate.
 								-->
-								<Setter Property="Padding" Value="0"/>
-								<!--
+									<Setter Property="Padding" Value="0"/>
+									<!--
 								I dont want to change ListBoxItem background color when it selected.
 								But if you look inside default ListBoxItem style - MaterialDesignListBoxItem,
 								you wil see that it have Border named "SelectedBorder" with Background={Binding Foreground...}.
@@ -152,186 +154,192 @@
 								transparent foreground, so return TextBlock.Foreground to MaterialDesign foreground brush inside
 								ItemTemplate.
 								-->
-								<Setter Property="Foreground" Value="Transparent"/>
-								<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
-							</Style>
-						</ListBox.ItemContainerStyle>
+									<Setter Property="Foreground" Value="Transparent"/>
+									<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
+								</Style>
+							</ListBox.ItemContainerStyle>
 
-						<ListBox.ItemTemplate>
-							<DataTemplate DataType="{x:Type local:Document}">
-								<Grid>
-									<Grid.RowDefinitions>
-										<RowDefinition Height="auto"/>
-										<RowDefinition Height="auto"/>
-									</Grid.RowDefinitions>
+							<ListBox.ItemTemplate>
+								<DataTemplate DataType="{x:Type local:Document}">
+									<Grid
+									Margin="0, 8, 0, 0">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="auto"/>
+											<RowDefinition Height="auto"/>
+											<RowDefinition Height="auto"/>
+										</Grid.RowDefinitions>
 
-									<materialDesign:Badged
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="auto"/>
+											<ColumnDefinition Width="auto"/>
+										</Grid.ColumnDefinitions>
+
+										<Button
 										Grid.Row="0"
-										Margin="16, 8, 16, 8"
+										Grid.Column="1"
+										
+										Margin="0, 0, 16, 0"
+										Padding="0"
+										
+										Width="16"
+										Height="16"
+										
+										Click="CloseDocumentButton_Click"
+										>
+											<materialDesign:PackIcon
+											Kind="CloseBox" />
+										</Button>
+
+										<materialDesign:Badged
+										Grid.Row="1"
+										Grid.Column="0"
+										
+										Margin="16, 0, 0, 8"
+										BadgePlacementMode="TopLeft"
 										Badge="{Binding ChangesCount, Mode=OneWay, Converter={StaticResource DocumentChangesToBangeConverter}}">
-										<TextBlock
+											<TextBlock
 											Margin="3"
 											Foreground="{DynamicResource MaterialDesignBody}"
 											Text="{Binding DisplayName, Mode=OneWay}"/>
-									</materialDesign:Badged>
+										</materialDesign:Badged>
 
-									<Border
-										Grid.Row="1"
+										<Border
+										Grid.Row="2"
+										Grid.Column="0"
+										Grid.ColumnSpan="2"
+										
 										Padding="0 5 0 0"
 										CornerRadius="2"
 										>
-										<Border.Style>
-											<Style TargetType="{x:Type Border}">
-												<Setter Property="Background" Value="Transparent"/>
-												<Style.Triggers>
-													<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
-														<Setter Property="Background" Value="{DynamicResource SecondaryAccentBrush}"/>
-													</DataTrigger>
-												</Style.Triggers>
-											</Style>
-										</Border.Style>
-									</Border>
-								</Grid>
-							</DataTemplate>
-						</ListBox.ItemTemplate>
+											<Border.Style>
+												<Style TargetType="{x:Type Border}">
+													<Setter Property="Background" Value="Transparent"/>
+													<Style.Triggers>
+														<DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}}" Value="True">
+															<Setter Property="Background" Value="{DynamicResource SecondaryAccentBrush}"/>
+														</DataTrigger>
+													</Style.Triggers>
+												</Style>
+											</Border.Style>
+										</Border>
+									</Grid>
+								</DataTemplate>
+							</ListBox.ItemTemplate>
 
-					</ListBox>
+						</ListBox>
 
-				</Grid>
+					</Grid>
 
-			</materialDesign:Card>
+				</materialDesign:Card>
 
-			<!-- 1 GEOMETRY-->
-			<local_controls:GeometryListBox
+				<!-- 1 GEOMETRY-->
+				<local_controls:GeometryListBox
 				Margin="16, 3, 16, 3"
 				Grid.Row="1"
 				Style="{StaticResource MaterialDesignToolToggleListBox}"
 				ItemsSource="{StaticResource GeometryTypes}">
 
-				<local_controls:GeometryListBox.ItemContainerStyle>
-					<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
-						<Setter Property="TargetGeometry" Value="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"/>
-					</Style>
-				</local_controls:GeometryListBox.ItemContainerStyle>
+					<local_controls:GeometryListBox.ItemContainerStyle>
+						<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
+							<Setter Property="TargetGeometry" Value="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"/>
+						</Style>
+					</local_controls:GeometryListBox.ItemContainerStyle>
 
-				<ListBox.ItemTemplate>
-					<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
+					<ListBox.ItemTemplate>
+						<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
 
-						<Image
+							<Image
 							ToolTip="{Binding DisplayName, Mode=OneWay}"
 							Stretch="None"
 							Source="{Binding GeomImage, Mode=OneWay}"/>
 
-					</DataTemplate>
-				</ListBox.ItemTemplate>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
 
-			</local_controls:GeometryListBox>
+				</local_controls:GeometryListBox>
 
-		</Grid>
+			</Grid>
 
-		<ListBox
+			<ListBox
 			Grid.Row="0"
 			VerticalAlignment="Top"
 			HorizontalAlignment="Right"
 			Grid.IsSharedSizeScope="True"
 			Background="Aqua"
 			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=sCAD}">
-			<ListBox.Resources>
-				<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
-					<TextBox
+				<ListBox.Resources>
+					<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
+						<TextBox
 						IsReadOnly="{Binding IsReadOnly}"
 						Text="{Binding Value, Mode=TwoWay}"/>
-				</DataTemplate>
-			</ListBox.Resources>
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<Border>
-						<Grid>
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="*" SharedSizeGroup="PropertyName" />
-								<ColumnDefinition Width="Auto" />
-								<ColumnDefinition Width="*" SharedSizeGroup="PropertyValue" />
-							</Grid.ColumnDefinitions>
+					</DataTemplate>
+				</ListBox.Resources>
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border>
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="*" SharedSizeGroup="PropertyName" />
+									<ColumnDefinition Width="Auto" />
+									<ColumnDefinition Width="*" SharedSizeGroup="PropertyValue" />
+								</Grid.ColumnDefinitions>
 
-							<TextBlock
+								<TextBlock
 								Margin="1"
 								Grid.Column="0"
 								Text="{Binding Name}" />
-							<GridSplitter
+								<GridSplitter
 								Grid.Column="1"
 								Width="1"
 								Background="Black"
 								VerticalAlignment="Stretch" />
-							<ContentPresenter
+								<ContentPresenter
 								Margin="1"
 								Grid.Column="2"
 								Content="{Binding .}" />
-						</Grid>
-					</Border>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
 
-		<!--
-		<ListBox
-			Width="100"
-			HorizontalAlignment="Right"
-			ItemsSource="{StaticResource GeometryTypes}">
-
-			<ListBox.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Vertical"/>
-				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
-
-			<ListBox.ItemTemplate>
-				<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
-					<local:GeometryCheckbox
-						Content="{Binding DisplayName}"
-						TargetGeometry="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"
-						Background="Bisque"/>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
-		-->
-
-		<Grid
+			<Grid
 			Margin="16, 0, 16, 8"
 			VerticalAlignment="Bottom">
 
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="*"/>
-				<ColumnDefinition Width="Auto"/>
-			</Grid.ColumnDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
 
-			<Grid.RowDefinitions>
-				<RowDefinition Height="64"/>
-			</Grid.RowDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="64"/>
+				</Grid.RowDefinitions>
 
-			<materialDesign:Card
+				<materialDesign:Card
 				VerticalAlignment="Stretch"
 				DataContext="{Binding Path=cadToolTip, ElementName=sCAD}">
 
-				<materialDesign:Card.Style>
-					<Style TargetType="{x:Type materialDesign:Card}">
-						<Setter Property="Visibility" Value="Visible"/>
-						<Style.Triggers>
-							<DataTrigger Binding="{Binding Path=cadToolTip, ElementName=sCAD}" Value="{x:Null}">
-								<Setter Property="Visibility" Value="Hidden"/>
-							</DataTrigger>
-						</Style.Triggers>
-					</Style>
-				</materialDesign:Card.Style>
+					<materialDesign:Card.Style>
+						<Style TargetType="{x:Type materialDesign:Card}">
+							<Setter Property="Visibility" Value="Visible"/>
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding Path=cadToolTip, ElementName=sCAD}" Value="{x:Null}">
+									<Setter Property="Visibility" Value="Hidden"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</materialDesign:Card.Style>
 
-				<Grid
+					<Grid
 					VerticalAlignment="Center">
 
-					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto"/>
-						<RowDefinition Height="Auto"/>
-					</Grid.RowDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
 
-					<Image
+						<Image
 						Grid.Row="0"
 						Grid.RowSpan="2"
 						
@@ -342,7 +350,7 @@
 						Stretch="None"
 						StretchDirection="DownOnly"
 						Source="{Binding Path=Image, Mode=OneWay}"/>
-					<TextBlock
+						<TextBlock
 						Grid.Row="0"
 						
 						Margin="56, 3, 16, 0"
@@ -352,7 +360,7 @@
 						Style="{DynamicResource MaterialDesignSubheadingTextBlock}"
 						Text="{Binding Path=Header}"/>
 
-					<TextBlock
+						<TextBlock
 						Grid.Row="1"
 						
 						Margin="56, 0, 16, 3"
@@ -363,10 +371,11 @@
 						Foreground="{DynamicResource MaterialDesignBodyLight}"
 						Text="{Binding Path=TooltipText}"/>
 
-				</Grid>
-				
-			</materialDesign:Card>
-			
+					</Grid>
+
+				</materialDesign:Card>
+
+			</Grid>
 		</Grid>
-	</Grid>
+	</materialDesign:DialogHost>
 </Window>

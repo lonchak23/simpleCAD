@@ -1,0 +1,64 @@
+﻿<UserControl
+	x:Class="simpleCAD_Example.SaveChangesDialog"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+	xmlns:local="clr-namespace:simpleCAD_Example"
+	mc:Ignorable="d"
+	
+	xmlns:system="clr-namespace:System;assembly=mscorlib"
+	xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+			 
+	d:DesignHeight="300" d:DesignWidth="300">
+	
+	<Grid Margin="16">
+
+		<Grid.RowDefinitions>
+			<RowDefinition />
+			<RowDefinition />
+		</Grid.RowDefinitions>
+
+		<TextBlock
+			Text="{Binding Text, Mode=OneWay}"
+			/>
+		<StackPanel
+			Grid.Row="1"
+			Margin="0 16 0 0"
+			Orientation="Horizontal"
+			HorizontalAlignment="Right">
+			
+			<Button
+				IsDefault="True"
+				Style="{DynamicResource MaterialDesignFlatButton}"
+				Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+				<Button.CommandParameter>
+					<system:Boolean>True</system:Boolean>
+				</Button.CommandParameter>
+				SAVE
+			</Button>
+
+			<Button
+				Margin="8 0 0 0"
+				Style="{DynamicResource MaterialDesignFlatButton}"
+				Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+				<Button.CommandParameter>
+					<x:Null/>
+				</Button.CommandParameter>
+				CONTINUE
+			</Button>
+
+			<Button
+				IsCancel="True"
+				Margin="8 0 0 0"
+				Style="{DynamicResource MaterialDesignFlatButton}"
+				Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+				<Button.CommandParameter>
+					<system:Boolean>False</system:Boolean>
+				</Button.CommandParameter>
+				CANCEL
+			</Button>
+			
+		</StackPanel>
+	</Grid>
+</UserControl>

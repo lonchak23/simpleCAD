@@ -1,8 +1,11 @@
-﻿using simpleCAD;
+﻿using MaterialDesignThemes.Wpf;
+using simpleCAD;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace simpleCAD_Example
 {
@@ -48,24 +51,34 @@ namespace simpleCAD_Example
 			string strFilePath = string.Empty;
 			if (curDoc.IsItNewDocument)
 			{
-				// Create SaveFileDialog
-				Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-
-				// Set filter for file extension and default file extension
-				dlg.DefaultExt = ".scad";
-				dlg.Filter = "SimpleCAD drawings (.scad)|*.scad";
-
-				// Display OpenFileDialog by calling ShowDialog method
-				Nullable<bool> result = dlg.ShowDialog();
-
-				// Get the selected file name and display in a TextBox
-				if (result == true)
-					strFilePath = dlg.FileName;
-				else
+				strFilePath = _GetPath();
+				if (string.IsNullOrEmpty(strFilePath))
 					return;
 			}
 
 			curDoc.Save(strFilePath);
+		}
+
+		//=============================================================================
+		private string _GetPath()
+		{
+			string strFilePath = null;
+
+			// Create SaveFileDialog
+			Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+
+			// Set filter for file extension and default file extension
+			dlg.DefaultExt = ".scad";
+			dlg.Filter = "SimpleCAD drawings (.scad)|*.scad";
+
+			// Display OpenFileDialog by calling ShowDialog method
+			Nullable<bool> result = dlg.ShowDialog();
+
+			// Get the selected file name and display in a TextBox
+			if (result == true)
+				strFilePath = dlg.FileName;
+
+			return strFilePath;
 		}
 
 		//=============================================================================
@@ -101,6 +114,64 @@ namespace simpleCAD_Example
 		private void NewButton_Click(object sender, RoutedEventArgs e)
 		{
 			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
+		}
+
+		//=============================================================================
+		private async void CloseDocumentButton_Click(object sender, RoutedEventArgs e)
+		{
+			Button btn = sender as Button;
+			if (btn == null)
+				return;
+
+			ListBoxItem lbi = Utils.TryFindParent<ListBoxItem>(btn);
+			if (lbi == null)
+				return;
+
+			Document docToClose = lbi.DataContext as Document;
+			if (docToClose == null)
+				return;
+
+			if(docToClose.ChangesCount > 0)
+			{
+				StringBuilder sb = new StringBuilder();
+				sb.Append("Document \"");
+				sb.Append(docToClose.DisplayName);
+				sb.Append("\" has changes. Do you want to save changes?");
+
+				SaveChangesDialog_ViewModel vm = new SaveChangesDialog_ViewModel();
+				vm.Text = sb.ToString();
+
+				SaveChangesDialog saveChangesDialog = new SaveChangesDialog(vm);
+
+				//show the dialog
+				// true - save
+				// false - cancel
+				// null - continue
+				var result = await DialogHost.Show(saveChangesDialog);
+
+				if(result is bool)
+				{
+					bool bRes = (bool)result;
+
+					// cancel - dont close document
+					if (!bRes)
+						return;
+
+					// save doc
+					if (docToClose.IsItNewDocument)
+					{
+						string strFilePath = _GetPath();
+						if (string.IsNullOrEmpty(strFilePath))
+							return;
+
+						docToClose.Save(strFilePath);
+					}
+					else
+						docToClose.Save();
+				}
+			}
+
+			m_VM.DocManager.OpenDocuments.Remove(docToClose);
 		}
 	}
 }
