@@ -171,7 +171,20 @@ namespace simpleCAD_Example
 				}
 			}
 
+			// select document
+			int iOldIndex = m_VM.DocManager.OpenDocuments.IndexOf(docToClose);
+			
 			m_VM.DocManager.OpenDocuments.Remove(docToClose);
+
+			if(m_VM.DocManager.OpenDocuments.Count > 0)
+			{
+				if (iOldIndex >= m_VM.DocManager.OpenDocuments.Count)
+					iOldIndex = m_VM.DocManager.OpenDocuments.Count - 1;
+
+				Document docToSelect = m_VM.DocManager.OpenDocuments[iOldIndex];
+				if (docToSelect != null)
+					docToSelect.IsSelected = true;
+			}
 		}
 
 		//=============================================================================
