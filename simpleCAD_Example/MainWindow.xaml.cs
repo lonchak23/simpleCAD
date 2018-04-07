@@ -173,5 +173,58 @@ namespace simpleCAD_Example
 
 			m_VM.DocManager.OpenDocuments.Remove(docToClose);
 		}
+
+		//=============================================================================
+		// Window closing event cant await for save changes dialog.
+		// So mark event as canceled and call save changes dialog.
+		// If user click "cancel" then it is nothing to do - event salready canceled.
+		// If user click "continue" then set m_ShouldClose to "true" and try to close application again.
+		// At the second try m_ShouldClose != null and we will not enter in save changes dialog section.
+		//
+		// m_ShouldClose is marker
+		// - null - mark event canceled and call save changes dialog
+		// - not null - do nothing and let window close
+		private bool? m_ShouldClose = null;
+		private async void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (m_ShouldClose == null)
+			{
+				// mark comment to m_ShouldClose
+				e.Cancel = true;
+
+				// is here unsaved documents?
+				bool bUnsaved = false;
+				foreach (Document doc in m_VM.DocManager.OpenDocuments)
+				{
+					if (doc.ChangesCount > 0)
+					{
+						bUnsaved = true;
+						break;
+					}
+				}
+
+				//
+				if (bUnsaved)
+				{
+					SaveChangesDialog_ViewModel vm = new SaveChangesDialog_ViewModel();
+					vm.Text = "There are unsaved documents. Some data will be lost possibly.";
+					vm.IsSaveButtonVisible = false;
+
+					SaveChangesDialog saveChangesDialog = new SaveChangesDialog(vm);
+
+					//show the dialog
+					// true - save
+					// false - cancel
+					// null - continue
+					var result = await DialogHost.Show(saveChangesDialog);
+
+					if (result is bool && !(bool)result)
+						return;
+				}
+
+				m_ShouldClose = true;
+				Application.Current.Shutdown();
+			}
+		}
 	}
 }

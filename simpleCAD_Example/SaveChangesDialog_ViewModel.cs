@@ -17,5 +17,20 @@ namespace simpleCAD_Example
 				NotifyPropertyChanged(() => Text);
 			}
 		}
+
+		//=============================================================================
+		private bool m_bIsSaveButtonVisible = true;
+		public bool IsSaveButtonVisible
+		{
+			get { return m_bIsSaveButtonVisible; }
+			set
+			{
+				if(m_bIsSaveButtonVisible != value)
+				{
+					m_bIsSaveButtonVisible = value;
+					NotifyPropertyChanged(() => IsSaveButtonVisible);
+				}
+			}
+		}
 	}
 }

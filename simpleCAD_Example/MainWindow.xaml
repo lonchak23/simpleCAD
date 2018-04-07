@@ -25,6 +25,8 @@
 	FontFamily="{DynamicResource MaterialDesignFont}"
 	
 	
+	Closing="Window_Closing"
+	
 	Title="MainWindow"
 	Height="800"
 	Width="900">

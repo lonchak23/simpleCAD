@@ -30,11 +30,23 @@
 			
 			<Button
 				IsDefault="True"
-				Style="{DynamicResource MaterialDesignFlatButton}"
 				Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}">
+				
 				<Button.CommandParameter>
 					<system:Boolean>True</system:Boolean>
 				</Button.CommandParameter>
+
+				<Button.Style>
+					<Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignFlatButton}">
+						<Setter Property="Visibility" Value="Visible"/>
+						<Style.Triggers>
+							<DataTrigger Binding="{Binding IsSaveButtonVisible}" Value="False">
+								<Setter Property="Visibility" Value="Collapsed"/>
+							</DataTrigger>
+						</Style.Triggers>
+					</Style>
+				</Button.Style>
+				
 				SAVE
 			</Button>
 
