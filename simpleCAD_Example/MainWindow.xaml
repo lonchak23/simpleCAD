@@ -55,14 +55,14 @@
 			</Grid.RowDefinitions>
 
 			<sCAD:SimpleCAD
-			x:Name="sCAD"
-			
-			Grid.Row="0"
-			VerticalAlignment="Stretch"
-			HorizontalAlignment="Stretch"
-			
-			State="{Binding DocManager.CurrentDocument.CurrentState, Mode=TwoWay}"
-			/>
+				x:Name="sCAD"
+				
+				Grid.Row="0"
+				VerticalAlignment="Stretch"
+				HorizontalAlignment="Stretch"
+				
+				State="{Binding DocManager.CurrentDocument.CurrentState, Mode=TwoWay}"
+				/>
 
 			<Grid>
 				<Grid.RowDefinitions>
@@ -72,9 +72,9 @@
 
 				<!-- 0 TABS-->
 				<materialDesign:Card
-				Grid.Row="0"
-				Margin="8, 3, 8, 3"
-				materialDesign:ShadowAssist.ShadowDepth="Depth4">
+					Grid.Row="0"
+					Margin="8, 3, 8, 3"
+					materialDesign:ShadowAssist.ShadowDepth="Depth4">
 
 					<Grid>
 
@@ -84,10 +84,10 @@
 						</Grid.RowDefinitions>
 
 						<StackPanel
-						Grid.Row="0"
-						
-						Margin="8, 8, 8, 8"
-						Orientation="Horizontal">
+							Grid.Row="0"
+							
+							Margin="8, 8, 8, 8"
+							Orientation="Horizontal">
 
 							<StackPanel.Resources>
 								<Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
@@ -106,29 +106,29 @@
 							</StackPanel.Resources>
 
 							<Button
-							Click="NewButton_Click">
+								Click="NewButton_Click">
 								<materialDesign:PackIcon
-								Kind="File" />
+									Kind="File" />
 							</Button>
 
 							<Button
-							Click="OpenButton_Click">
+								Click="OpenButton_Click">
 								<materialDesign:PackIcon
-								Kind="Folder" />
+									Kind="Folder" />
 							</Button>
 
 							<Button
-							Click="SaveButton_Click">
+								Click="SaveButton_Click">
 								<materialDesign:PackIcon Kind="ContentSave" />
 							</Button>
 
 						</StackPanel>
 
 						<ListBox
-						Grid.Row="1"
-						SelectedIndex="0"
-						SelectedItem="{Binding DocManager.CurrentDocument, Mode=TwoWay}"
-						ItemsSource="{Binding DocManager.OpenDocuments, Mode=OneWay}">
+							Grid.Row="1"
+							SelectedIndex="0"
+							SelectedItem="{Binding DocManager.CurrentDocument, Mode=TwoWay}"
+							ItemsSource="{Binding DocManager.OpenDocuments, Mode=OneWay}">
 
 							<ListBox.ItemsPanel>
 								<ItemsPanelTemplate>
@@ -139,23 +139,23 @@
 							<ListBox.ItemContainerStyle>
 								<Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
 									<!--
-								Too big padding on Ripple - wrap around ListBoxItemTemplate. Disable it.
-								I want draw selection line at ListBoxItem bottom without any padding.
-								Look at ItemTemplate.
-								-->
+									Too big padding on Ripple - wrap around ListBoxItemTemplate. Disable it.
+									I want draw selection line at ListBoxItem bottom without any padding.
+									Look at ItemTemplate.
+									-->
 									<Setter Property="Padding" Value="0"/>
 									<!--
-								I dont want to change ListBoxItem background color when it selected.
-								But if you look inside default ListBoxItem style - MaterialDesignListBoxItem,
-								you wil see that it have Border named "SelectedBorder" with Background={Binding Foreground...}.
-								This border is invisible(Opacity=0) by default.
-								But when item was selected border's opacity changes to 0.18 inside "Selected" visual state.
+									I dont want to change ListBoxItem background color when it selected.
+									But if you look inside default ListBoxItem style - MaterialDesignListBoxItem,
+									you wil see that it have Border named "SelectedBorder" with Background={Binding Foreground...}.
+									This border is invisible(Opacity=0) by default.
+									But when item was selected border's opacity changes to 0.18 inside "Selected" visual state.
 								
-								For disable changing item background on selection without override ListBoxItem.ControlTemplate
-								lets set ListBoxItem.Foreground="Transparent". But all text inside ListBoxItem now will have
-								transparent foreground, so return TextBlock.Foreground to MaterialDesign foreground brush inside
-								ItemTemplate.
-								-->
+									For disable changing item background on selection without override ListBoxItem.ControlTemplate
+									lets set ListBoxItem.Foreground="Transparent". But all text inside ListBoxItem now will have
+									transparent foreground, so return TextBlock.Foreground to MaterialDesign foreground brush inside
+									ItemTemplate.
+									-->
 									<Setter Property="Foreground" Value="Transparent"/>
 									<Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}"/>
 								</Style>
@@ -164,7 +164,7 @@
 							<ListBox.ItemTemplate>
 								<DataTemplate DataType="{x:Type local:Document}">
 									<Grid
-									Margin="0, 8, 0, 0">
+										Margin="0, 8, 0, 0">
 										<Grid.RowDefinitions>
 											<RowDefinition Height="auto"/>
 											<RowDefinition Height="auto"/>
@@ -177,42 +177,42 @@
 										</Grid.ColumnDefinitions>
 
 										<Button
-										Grid.Row="0"
-										Grid.Column="1"
-										
-										Margin="0, 0, 16, 0"
-										Padding="0"
-										
-										Width="16"
-										Height="16"
-										
-										Click="CloseDocumentButton_Click"
-										>
+											Grid.Row="0"
+											Grid.Column="1"
+											
+											Margin="0, 0, 16, 0"
+											Padding="0"
+											
+											Width="16"
+											Height="16"
+											
+											Click="CloseDocumentButton_Click"
+											>
 											<materialDesign:PackIcon
-											Kind="CloseBox" />
+												Kind="CloseBox" />
 										</Button>
 
 										<materialDesign:Badged
-										Grid.Row="1"
-										Grid.Column="0"
-										
-										Margin="16, 0, 0, 8"
-										BadgePlacementMode="TopLeft"
-										Badge="{Binding ChangesCount, Mode=OneWay, Converter={StaticResource DocumentChangesToBangeConverter}}">
+											Grid.Row="1"
+											Grid.Column="0"
+											
+											Margin="16, 0, 0, 8"
+											BadgePlacementMode="TopLeft"
+											Badge="{Binding ChangesCount, Mode=OneWay, Converter={StaticResource DocumentChangesToBangeConverter}}">
 											<TextBlock
-											Margin="3"
-											Foreground="{DynamicResource MaterialDesignBody}"
-											Text="{Binding DisplayName, Mode=OneWay}"/>
+												Margin="3"
+												Foreground="{DynamicResource MaterialDesignBody}"
+												Text="{Binding DisplayName, Mode=OneWay}"/>
 										</materialDesign:Badged>
 
 										<Border
-										Grid.Row="2"
-										Grid.Column="0"
-										Grid.ColumnSpan="2"
-										
-										Padding="0 5 0 0"
-										CornerRadius="2"
-										>
+											Grid.Row="2"
+											Grid.Column="0"
+											Grid.ColumnSpan="2"
+											
+											Padding="0 5 0 0"
+											CornerRadius="2"
+											>
 											<Border.Style>
 												<Style TargetType="{x:Type Border}">
 													<Setter Property="Background" Value="Transparent"/>
@@ -236,10 +236,10 @@
 
 				<!-- 1 GEOMETRY-->
 				<local_controls:GeometryListBox
-				Margin="16, 3, 16, 3"
-				Grid.Row="1"
-				Style="{StaticResource MaterialDesignToolToggleListBox}"
-				ItemsSource="{StaticResource GeometryTypes}">
+					Margin="16, 3, 16, 3"
+					Grid.Row="1"
+					Style="{StaticResource MaterialDesignToolToggleListBox}"
+					ItemsSource="{StaticResource GeometryTypes}">
 
 					<local_controls:GeometryListBox.ItemContainerStyle>
 						<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
@@ -251,9 +251,9 @@
 						<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
 
 							<Image
-							ToolTip="{Binding DisplayName, Mode=OneWay}"
-							Stretch="None"
-							Source="{Binding GeomImage, Mode=OneWay}"/>
+								ToolTip="{Binding DisplayName, Mode=OneWay}"
+								Stretch="None"
+								Source="{Binding GeomImage, Mode=OneWay}"/>
 
 						</DataTemplate>
 					</ListBox.ItemTemplate>
@@ -263,17 +263,17 @@
 			</Grid>
 
 			<ListBox
-			Grid.Row="0"
-			VerticalAlignment="Top"
-			HorizontalAlignment="Right"
-			Grid.IsSharedSizeScope="True"
-			Background="Aqua"
-			ItemsSource="{Binding SelectedGeometry.Properties, ElementName=sCAD}">
+				Grid.Row="0"
+				VerticalAlignment="Top"
+				HorizontalAlignment="Right"
+				Grid.IsSharedSizeScope="True"
+				Background="Aqua"
+				ItemsSource="{Binding SelectedGeometry.Properties, ElementName=sCAD}">
 				<ListBox.Resources>
 					<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
 						<TextBox
-						IsReadOnly="{Binding IsReadOnly}"
-						Text="{Binding Value, Mode=TwoWay}"/>
+							IsReadOnly="{Binding IsReadOnly}"
+							Text="{Binding Value, Mode=TwoWay}"/>
 					</DataTemplate>
 				</ListBox.Resources>
 				<ListBox.ItemTemplate>
@@ -287,18 +287,18 @@
 								</Grid.ColumnDefinitions>
 
 								<TextBlock
-								Margin="1"
-								Grid.Column="0"
-								Text="{Binding Name}" />
+									Margin="1"
+									Grid.Column="0"
+									Text="{Binding Name}" />
 								<GridSplitter
-								Grid.Column="1"
-								Width="1"
-								Background="Black"
-								VerticalAlignment="Stretch" />
+									Grid.Column="1"
+									Width="1"
+									Background="Black"
+									VerticalAlignment="Stretch" />
 								<ContentPresenter
-								Margin="1"
-								Grid.Column="2"
-								Content="{Binding .}" />
+									Margin="1"
+									Grid.Column="2"
+									Content="{Binding .}" />
 							</Grid>
 						</Border>
 					</DataTemplate>
@@ -306,8 +306,8 @@
 			</ListBox>
 
 			<Grid
-			Margin="16, 0, 16, 8"
-			VerticalAlignment="Bottom">
+				Margin="16, 0, 16, 8"
+				VerticalAlignment="Bottom">
 
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="*"/>
@@ -319,8 +319,8 @@
 				</Grid.RowDefinitions>
 
 				<materialDesign:Card
-				VerticalAlignment="Stretch"
-				DataContext="{Binding Path=cadToolTip, ElementName=sCAD}">
+					VerticalAlignment="Stretch"
+					DataContext="{Binding Path=cadToolTip, ElementName=sCAD}">
 
 					<materialDesign:Card.Style>
 						<Style TargetType="{x:Type materialDesign:Card}">
@@ -334,7 +334,7 @@
 					</materialDesign:Card.Style>
 
 					<Grid
-					VerticalAlignment="Center">
+						VerticalAlignment="Center">
 
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
@@ -342,36 +342,36 @@
 						</Grid.RowDefinitions>
 
 						<Image
-						Grid.Row="0"
-						Grid.RowSpan="2"
-						
-						Margin="16, 3, 0, 3"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Center"
-						
-						Stretch="None"
-						StretchDirection="DownOnly"
-						Source="{Binding Path=Image, Mode=OneWay}"/>
+							Grid.Row="0"
+							Grid.RowSpan="2"
+							
+							Margin="16, 3, 0, 3"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Center"
+							
+							Stretch="None"
+							StretchDirection="DownOnly"
+							Source="{Binding Path=Image, Mode=OneWay}"/>
 						<TextBlock
-						Grid.Row="0"
-						
-						Margin="56, 3, 16, 0"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Center"
-						
-						Style="{DynamicResource MaterialDesignSubheadingTextBlock}"
-						Text="{Binding Path=Header}"/>
+							Grid.Row="0"
+							
+							Margin="56, 3, 16, 0"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Center"
+							
+							Style="{DynamicResource MaterialDesignSubheadingTextBlock}"
+							Text="{Binding Path=Header}"/>
 
 						<TextBlock
-						Grid.Row="1"
-						
-						Margin="56, 0, 16, 3"
-						HorizontalAlignment="Left"
-						VerticalAlignment="Center"
-						
-						Style="{DynamicResource MaterialDesignBody1TextBlock}"
-						Foreground="{DynamicResource MaterialDesignBodyLight}"
-						Text="{Binding Path=TooltipText}"/>
+							Grid.Row="1"
+							
+							Margin="56, 0, 16, 3"
+							HorizontalAlignment="Left"
+							VerticalAlignment="Center"
+							
+							Style="{DynamicResource MaterialDesignBody1TextBlock}"
+							Foreground="{DynamicResource MaterialDesignBodyLight}"
+							Text="{Binding Path=TooltipText}"/>
 
 					</Grid>
 
