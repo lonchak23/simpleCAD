@@ -286,9 +286,70 @@ namespace simpleCAD
 			set { SetValue(SimpleCAD.cadToolTipProperty, value); }
 		}
 
+		//=============================================================================
+		/// <summary>
+		/// DependencyProperty for <see cref="Background" /> property.
+		/// </summary>
+		public static readonly DependencyProperty BackgroundProperty =
+				DependencyProperty.Register("Background",
+						typeof(Brush),
+						typeof(SimpleCAD),
+						new FrameworkPropertyMetadata((Brush)null,
+								FrameworkPropertyMetadataOptions.AffectsRender |
+								FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender));
+		/// <summary>
+		/// The Background property defines the brush used to fill the area between borders.
+		/// </summary>
+		public Brush Background
+		{
+			get { return (Brush)GetValue(BackgroundProperty); }
+			set { SetValue(BackgroundProperty, value); }
+		}
+
+		//=============================================================================
+		public static readonly DependencyProperty DisabledBackgroundProperty =
+				DependencyProperty.Register("DisabledBackground",
+						typeof(Brush),
+						typeof(SimpleCAD),
+						new FrameworkPropertyMetadata( new SolidColorBrush(Color.FromRgb(190, 190, 190)),
+								FrameworkPropertyMetadataOptions.AffectsRender |
+								FrameworkPropertyMetadataOptions.SubPropertiesDoNotAffectRender));
+		/// <summary>
+		/// The Background property defines the brush used to fill the area between borders.
+		/// </summary>
+		public Brush DisabledBackground
+		{
+			get { return (Brush)GetValue(DisabledBackgroundProperty); }
+			set { SetValue(DisabledBackgroundProperty, value); }
+		}
+
 		#endregion
 
 		#region Overrides
+
+		//=============================================================================
+		/// <summary>
+		///     Fills in the background based on the Background property.
+		/// </summary>
+		protected override void OnRender(DrawingContext dc)
+		{
+			Brush background = Background;
+			if (!this.IsEnabled)
+				background = DisabledBackground;
+
+			//
+			// This code is copied from panel source.
+			//
+			if (background != null)
+			{
+				// Using the Background brush, draw a rectangle that fills the
+				// render bounds of the panel.
+				Size renderSize = RenderSize;
+				dc.DrawRectangle(background,
+								 null,
+								 new Rect(0.0, 0.0, renderSize.Width, renderSize.Height));
+			}
+		}
 
 		//=============================================================================
 		protected override int VisualChildrenCount
@@ -842,13 +903,25 @@ namespace simpleCAD
 		{
 			_ClearAll();
 
+			bool bInvalidate = false;
 			if (state == null)
 			{
 				if (this.IsEnabled)
+				{
 					this.IsEnabled = false;
+					bInvalidate = true;
+				}
 			}
 			else if (!this.IsEnabled)
+			{
 				this.IsEnabled = true;
+				bInvalidate = true;
+			}
+
+			//
+			// call InvalidateVisual, it will call OnRender() and redraw background
+			if (bInvalidate)
+				InvalidateVisual();
 
 			if (state == null)
 				return false;
