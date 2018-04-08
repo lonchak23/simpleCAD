@@ -10,6 +10,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Windows.Controls;
 
 namespace simpleCAD
 {
@@ -271,10 +272,7 @@ namespace simpleCAD
 		}
 		public void On_State_Changed(SimpleCAD_State newState)
 		{
-			if(newState != null)
-			{
-				this.SetState(newState);
-			}
+			this.SetState(newState);
 		}
 
 		//=============================================================================
@@ -338,6 +336,9 @@ namespace simpleCAD
 		{
 			base.OnMouseLeftButtonDown(e);
 
+			if (!this.IsEnabled)
+				return;
+
 			Point globalPnt = _GetGlobalPoint(e);
 
 			if(m_NewGeometry != null)
@@ -389,6 +390,9 @@ namespace simpleCAD
 		{
 			base.OnMouseMove(e);
 
+			if (!this.IsEnabled)
+				return;
+
 			// move plot
 			if (e.MiddleButton == MouseButtonState.Pressed)
 			{
@@ -424,6 +428,9 @@ namespace simpleCAD
 		{
 			base.OnMouseDown(e);
 
+			if (!this.IsEnabled)
+				return;
+
 			//
 			if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
 				m_MiddleBtnPressed_Point = _GetLocalPoint(e);
@@ -433,6 +440,9 @@ namespace simpleCAD
 		protected override void OnMouseUp(MouseButtonEventArgs e)
 		{
 			base.OnMouseUp(e);
+
+			if (!this.IsEnabled)
+				return;
 
 			//
 			if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Released)
@@ -449,6 +459,9 @@ namespace simpleCAD
 		protected override void OnMouseWheel(MouseWheelEventArgs e)
 		{
 			base.OnMouseWheel(e);
+
+			if (!this.IsEnabled)
+				return;
 
 			Point globalPnt_UnderMouse = _GetGlobalPoint(e);
 			Point localPnt_UnderMouse = _GetLocalPoint(e);
@@ -682,6 +695,9 @@ namespace simpleCAD
 		//=============================================================================
 		public void OnKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
 		{
+			if (!this.IsEnabled)
+				return;
+
 			if (Key.Escape == e.Key)
 				_Cancel();
 			else if (SelectedGeometry != null)
@@ -825,6 +841,14 @@ namespace simpleCAD
 		private bool SetState(SimpleCAD_State state)
 		{
 			_ClearAll();
+
+			if (state == null)
+			{
+				if (this.IsEnabled)
+					this.IsEnabled = false;
+			}
+			else if (!this.IsEnabled)
+				this.IsEnabled = true;
 
 			if (state == null)
 				return false;

@@ -62,7 +62,8 @@
 				HorizontalAlignment="Stretch"
 				
 				State="{Binding DocManager.CurrentDocument.CurrentState, Mode=TwoWay}"
-				/>
+				>
+			</sCAD:SimpleCAD>
 
 			<Grid>
 				<Grid.RowDefinitions>
@@ -238,8 +239,17 @@
 				<local_controls:GeometryListBox
 					Margin="16, 3, 16, 3"
 					Grid.Row="1"
-					Style="{StaticResource MaterialDesignToolToggleListBox}"
 					ItemsSource="{StaticResource GeometryTypes}">
+
+					<local_controls:GeometryListBox.Style>
+						<Style TargetType="{x:Type local_controls:GeometryListBox}" BasedOn="{StaticResource MaterialDesignToolToggleListBox}">
+							<Style.Triggers>
+								<DataTrigger Binding="{Binding DocManager.CurrentDocument}" Value="{x:Null}">
+									<Setter Property="IsEnabled" Value="False"/>
+								</DataTrigger>
+							</Style.Triggers>
+						</Style>
+					</local_controls:GeometryListBox.Style>
 
 					<local_controls:GeometryListBox.ItemContainerStyle>
 						<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
