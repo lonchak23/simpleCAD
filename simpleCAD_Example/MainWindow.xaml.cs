@@ -105,7 +105,9 @@ namespace simpleCAD_Example
 					BinaryFormatter bf = new BinaryFormatter();
 					SimpleCAD_State state = (SimpleCAD_State)bf.Deserialize(fs);
 
-					m_VM.DocManager.Add(dlg.FileName, state);
+					Document newDoc = m_VM.DocManager.Add(dlg.FileName, state);
+					if (newDoc != null)
+						newDoc.IsSelected = true;
 				}
 			}
 		}
@@ -113,7 +115,9 @@ namespace simpleCAD_Example
 		//=============================================================================
 		private void NewButton_Click(object sender, RoutedEventArgs e)
 		{
-			m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
+			Document newDoc = m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
+			if (newDoc != null)
+				newDoc.IsSelected = true;
 		}
 
 		//=============================================================================

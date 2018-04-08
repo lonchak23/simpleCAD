@@ -212,17 +212,17 @@ namespace simpleCAD_Example
 		}
 
 		//=============================================================================
-		public bool Add(string strPath, SimpleCAD_State state)
+		public Document Add(string strPath, SimpleCAD_State state)
 		{
 			return Add(new Document(this, strPath, state));
 		}
-		public bool Add(Document doc)
+		public Document Add(Document doc)
 		{
 			if (doc == null)
-				return false;
+				return null;
 
 			OpenDocuments.Add(doc);
-			return true;
+			return doc;
 		}
 	}
 }
