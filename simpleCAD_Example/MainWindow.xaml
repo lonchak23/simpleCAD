@@ -69,7 +69,6 @@
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
 				<!-- 0 TABS-->
@@ -236,127 +235,151 @@
 
 				</materialDesign:Card>
 
-				<!-- 1 GEOMETRY-->
-				<local_controls:GeometryListBox
+				<!-- 1 GEOMETRY and PROPERTIES -->
+				<Grid
 					Margin="16, 3, 16, 3"
-					Grid.Row="1"
-					ItemsSource="{StaticResource GeometryTypes}">
+					Grid.Row="1">
 
-					<local_controls:GeometryListBox.ItemsPanel>
-						<ItemsPanelTemplate>
-							<WrapPanel Orientation="Horizontal"/>
-						</ItemsPanelTemplate>
-					</local_controls:GeometryListBox.ItemsPanel>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+					</Grid.RowDefinitions>
+					
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					
+					<!-- GEOMETRY-->
+					<local_controls:GeometryListBox
+						Grid.Row="0"
+						Grid.Column="0"
+						
+						VerticalAlignment="Top"
+						HorizontalAlignment="Left"
+						
+						Margin="0, 0, 8, 0"
+						ItemsSource="{StaticResource GeometryTypes}">
 
-					<local_controls:GeometryListBox.Style>
-						<Style TargetType="{x:Type local_controls:GeometryListBox}" BasedOn="{StaticResource MaterialDesignToolToggleListBox}">
-							<Style.Triggers>
-								<DataTrigger Binding="{Binding DocManager.CurrentDocument}" Value="{x:Null}">
-									<Setter Property="IsEnabled" Value="False"/>
-								</DataTrigger>
-							</Style.Triggers>
-						</Style>
-					</local_controls:GeometryListBox.Style>
+						<local_controls:GeometryListBox.ItemsPanel>
+							<ItemsPanelTemplate>
+								<WrapPanel Orientation="Horizontal"/>
+							</ItemsPanelTemplate>
+						</local_controls:GeometryListBox.ItemsPanel>
 
-					<local_controls:GeometryListBox.ItemContainerStyle>
-						<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
-							<Setter Property="TargetGeometry" Value="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"/>
-						</Style>
-					</local_controls:GeometryListBox.ItemContainerStyle>
+						<local_controls:GeometryListBox.Style>
+							<Style TargetType="{x:Type local_controls:GeometryListBox}" BasedOn="{StaticResource MaterialDesignToolToggleListBox}">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding DocManager.CurrentDocument}" Value="{x:Null}">
+										<Setter Property="IsEnabled" Value="False"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</local_controls:GeometryListBox.Style>
 
-					<ListBox.ItemTemplate>
-						<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
+						<local_controls:GeometryListBox.ItemContainerStyle>
+							<Style TargetType="{x:Type local_controls:GeometryListBoxItem}" BasedOn="{StaticResource MaterialDesignToolToggleListBoxItem}">
+								<Setter Property="TargetGeometry" Value="{Binding Path=GeometryToCreate, ElementName=sCAD, Mode=TwoWay}"/>
+							</Style>
+						</local_controls:GeometryListBox.ItemContainerStyle>
 
-							<Image
-								ToolTip="{Binding DisplayName, Mode=OneWay}"
-								Stretch="None"
-								Source="{Binding GeomImage, Mode=OneWay}"/>
+						<ListBox.ItemTemplate>
+							<DataTemplate DataType="{x:Type sCAD:ICadGeometry}">
 
-						</DataTemplate>
-					</ListBox.ItemTemplate>
+								<Image
+									ToolTip="{Binding DisplayName, Mode=OneWay}"
+									Stretch="None"
+									Source="{Binding GeomImage, Mode=OneWay}"/>
 
-				</local_controls:GeometryListBox>
+							</DataTemplate>
+						</ListBox.ItemTemplate>
 
-				<!-- 2 Properties -->
-				<materialDesign:Card
-					HorizontalAlignment="Right"
-					Grid.Row="2"
-					Margin="8">
+					</local_controls:GeometryListBox>
 
-					<Grid>
+					<!--  PROPERTIES -->
+					<materialDesign:Card
+						Grid.Column="1"
+						Grid.Row="0"
+						Grid.RowSpan="2"
+						
+						Margin="8, 0, 0, 0"
+						HorizontalAlignment="Right">
 
-						<Expander
-							IsExpanded="True"
-							ExpandDirection="Right">
+						<Grid>
 
-							<Expander.Header>
-								<TextBlock Text="Properties" RenderTransformOrigin=".5,.5">
-									<TextBlock.LayoutTransform>
-										<RotateTransform Angle="90" />
-									</TextBlock.LayoutTransform>
-								</TextBlock>
-							</Expander.Header>
+							<Expander
+								IsExpanded="True"
+								ExpandDirection="Right">
 
-							<Expander.Style>
-								<Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
-									<Setter Property="Visibility" Value="Visible"/>
-									<Style.Triggers>
-										<DataTrigger Binding="{Binding SelectedGeometry, ElementName=sCAD}" Value="{x:Null}">
-											<Setter Property="Visibility" Value="Collapsed"/>
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</Expander.Style>
+								<Expander.Header>
+									<TextBlock Text="Properties" RenderTransformOrigin=".5,.5">
+										<TextBlock.LayoutTransform>
+											<RotateTransform Angle="90" />
+										</TextBlock.LayoutTransform>
+									</TextBlock>
+								</Expander.Header>
 
-							<ListBox
-								Grid.Row="1"
-								
-								Grid.IsSharedSizeScope="True"
-								VerticalAlignment="Top"
-								HorizontalAlignment="Right"
-								
-								Background="Transparent"
-								ItemsSource="{Binding SelectedGeometry.Properties, ElementName=sCAD}">
-								
-								<ListBox.Resources>
-									<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
-										<TextBox
-											IsReadOnly="{Binding IsReadOnly}"
-											Text="{Binding Value, Mode=TwoWay}"/>
-									</DataTemplate>
-								</ListBox.Resources>
-								
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<Border>
-											<Grid>
-												<Grid.ColumnDefinitions>
-													<ColumnDefinition Width="Auto" SharedSizeGroup="PropertyName" />
-													<ColumnDefinition Width="Auto" SharedSizeGroup="PropertyValue" />
-												</Grid.ColumnDefinitions>
+								<Expander.Style>
+									<Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
+										<Setter Property="Visibility" Value="Visible"/>
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding SelectedGeometry, ElementName=sCAD}" Value="{x:Null}">
+												<Setter Property="Visibility" Value="Collapsed"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Expander.Style>
 
-												<TextBlock
-													Grid.Column="0"
-													Margin="0, 0, 16, 0"
-													VerticalAlignment="Center"
-													Text="{Binding Name}" />
+								<ListBox
+									Grid.Row="1"
+									
+									Grid.IsSharedSizeScope="True"
+									VerticalAlignment="Top"
+									HorizontalAlignment="Right"
+									
+									Background="Transparent"
+									ItemsSource="{Binding SelectedGeometry.Properties, ElementName=sCAD}">
 
-												<ContentPresenter
-													Grid.Column="2"
-													Margin="16, 0, 16, 0"
-													VerticalAlignment="Center"
-													Content="{Binding .}" />
-											</Grid>
-										</Border>
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
+									<ListBox.Resources>
+										<DataTemplate DataType="{x:Type cadGeom:Property_ViewModel}">
+											<TextBox
+												IsReadOnly="{Binding IsReadOnly}"
+												Text="{Binding Value, Mode=TwoWay}"/>
+										</DataTemplate>
+									</ListBox.Resources>
 
-						</Expander>
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<Border>
+												<Grid>
+													<Grid.ColumnDefinitions>
+														<ColumnDefinition Width="Auto" SharedSizeGroup="PropertyName" />
+														<ColumnDefinition Width="Auto" SharedSizeGroup="PropertyValue" />
+													</Grid.ColumnDefinitions>
 
-					</Grid>
-				</materialDesign:Card>
-				
+													<TextBlock
+														Grid.Column="0"
+														Margin="0, 0, 16, 0"
+														VerticalAlignment="Center"
+														Text="{Binding Name}" />
+
+													<ContentPresenter
+														Grid.Column="2"
+														Margin="16, 0, 16, 0"
+														VerticalAlignment="Center"
+														Content="{Binding .}" />
+												</Grid>
+											</Border>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+								</ListBox>
+
+							</Expander>
+
+						</Grid>
+					</materialDesign:Card>
+				</Grid>
+
 			</Grid>
 
 			<Grid
