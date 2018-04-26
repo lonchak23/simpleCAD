@@ -74,6 +74,12 @@ namespace simpleCAD
 				typeof(SimpleCAD_State),
 				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(null, On_State_Changed));
+
+			SimpleCAD.SelectionBrushProperty = DependencyProperty.Register(
+				"SelectionBrush",
+				typeof(Brush),
+				typeof(SimpleCAD),
+				new FrameworkPropertyMetadata(Brushes.Blue, On_SelectionBrush_Changed));
 		}
 
 		public SimpleCAD()
@@ -340,6 +346,20 @@ namespace simpleCAD
 		{
 			get { return (Brush)GetValue(DisabledBackgroundProperty); }
 			set { SetValue(DisabledBackgroundProperty, value); }
+		}
+
+		//=============================================================================
+		public static readonly DependencyProperty SelectionBrushProperty;
+		public Brush SelectionBrush
+		{
+			get { return (Brush)GetValue(SimpleCAD.SelectionBrushProperty); }
+			set { SetValue(SimpleCAD.SelectionBrushProperty, value); }
+		}
+		private static void On_SelectionBrush_Changed(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			SimpleCAD dh = d as SimpleCAD;
+			if (dh != null)
+				UpdatePlot();
 		}
 
 		#endregion

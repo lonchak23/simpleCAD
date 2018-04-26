@@ -11,14 +11,14 @@ namespace simpleCAD.Geometry
 {
 	internal class cadGrip : DrawingVisual
 	{
-		private ICoordinateSystem m_cs = null;
+		private SimpleCAD m_plot = null;
 		private ICadGeometry m_owner = null;
 		private int m_gripIndex = -1;
 
 		//=============================================================================
-		public cadGrip(ICoordinateSystem cs, ICadGeometry owner, int gripIndex)
+		public cadGrip(SimpleCAD plot, ICadGeometry owner, int gripIndex)
 		{
-			m_cs = cs;
+			m_plot = plot;
 			m_owner = owner;
 			m_gripIndex = gripIndex;
 
@@ -28,11 +28,11 @@ namespace simpleCAD.Geometry
 		//=============================================================================
 		public Point GripLocalPoint()
 		{
-			if (m_cs != null && m_owner != null && m_gripIndex >= 0)
+			if (m_plot != null && m_owner != null && m_gripIndex >= 0)
 			{
 				List<Point> pnts = m_owner.GetGripPoints();
 				if (pnts != null && m_gripIndex < pnts.Count)
-					return m_cs.GetLocalPoint(pnts[m_gripIndex]);
+					return m_plot.GetLocalPoint(pnts[m_gripIndex]);
 			}
 
 			return new Point();
@@ -60,7 +60,12 @@ namespace simpleCAD.Geometry
 				Point pnt2 = pnt + vec;
 				Rect rect = new Rect(pnt1, pnt2);
 				Pen _pen = new Pen(Brushes.Black, 1.0);
-				dc.DrawRectangle(Brushes.Aqua, _pen, rect);
+
+				Brush fillBrush = Brushes.Blue;
+				if (m_plot != null)
+					fillBrush = m_plot.SelectionBrush;
+
+				dc.DrawRectangle(fillBrush, _pen, rect);
 			}
 		}
 

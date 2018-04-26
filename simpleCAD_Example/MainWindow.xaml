@@ -61,6 +61,8 @@
 				VerticalAlignment="Stretch"
 				HorizontalAlignment="Stretch"
 				
+				SelectionBrush="{DynamicResource SecondaryAccentBrush}"
+				
 				State="{Binding DocManager.CurrentDocument.CurrentState, Mode=TwoWay}"
 				>
 			</sCAD:SimpleCAD>
