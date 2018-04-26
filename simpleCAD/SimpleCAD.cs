@@ -11,6 +11,7 @@ using System.IO;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace simpleCAD
 {
@@ -135,6 +136,21 @@ namespace simpleCAD
 		/// </summary>
 		private Vector m_TempOffsetVector = new Vector(0.0, 0.0);
 		private ICadGeometry m_NewGeometry = null;
+		// 
+		// State property updates every time when simpleCAD state changed.
+		// So simpleCAD user can implement Memento pattern for undo\redo.
+		// But State is DependencyProperty, so the only way to mark State changed - 
+		// is set value to it. Like this:
+		// State = _GetState()
+		//
+		// But there is a problem - when State updated this way it calls On_State_Changed callback.
+		// In callback _ClearAll() function is called and then new state is setted. 
+		// If user move grip and click mouse left button, _OnInternalCommandEnded is called, State update happens and _ClearAll()
+		// remove all grips. But State is not changed really.
+		//
+		// To solve this problem let set m_bDontUpdateState = true on internal commands(_OnCommandEnded) and ignore
+		// State changing.
+		private bool m_bDontUpdateState = false;
 
 		//=============================================================================
 		private static List<double> m_ScaleList = new List<double>()
@@ -272,6 +288,9 @@ namespace simpleCAD
 		}
 		public void On_State_Changed(SimpleCAD_State newState)
 		{
+			if (m_bDontUpdateState)
+				return;
+
 			this.SetState(newState);
 		}
 
@@ -411,7 +430,7 @@ namespace simpleCAD
 					m_NewGeometry.Draw(this, null);
 					m_NewGeometry = null;
 
-					_OnCommandEnded();
+					_OnInternalCommandEnded();
 
 					// start new geom
 					_CloneGeom();
@@ -429,7 +448,7 @@ namespace simpleCAD
 					//
 					// End of grip dragging.
 					// Geometry property was changed.
-					_OnCommandEnded();
+					_OnInternalCommandEnded();
 
 					return;
 				}
@@ -512,7 +531,7 @@ namespace simpleCAD
 				m_TempOffsetVector.X = 0.0;
 				m_TempOffsetVector.Y = 0.0;
 
-				_OnCommandEnded();
+				_OnInternalCommandEnded();
 			}
 		}
 
@@ -584,7 +603,7 @@ namespace simpleCAD
 			m_TempOffsetVector.X = 0;
 			m_TempOffsetVector.Y = 0;
 
-			_OnCommandEnded();
+			_OnInternalCommandEnded();
 
 			UpdatePlot();
 		}
@@ -874,10 +893,17 @@ namespace simpleCAD
 		}
 
 		//=============================================================================
-		private void _OnCommandEnded()
+		private void _OnInternalCommandEnded()
 		{
+			//
 			// Update State
+			// Set m_bDontUpdateState = true to ignore State changing because
+			// it is not changed really.
+			m_bDontUpdateState = true;
+			//
 			State = GetState();
+			//
+			m_bDontUpdateState = false;
 		}
 
 		//=============================================================================
