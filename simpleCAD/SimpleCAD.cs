@@ -80,6 +80,13 @@ namespace simpleCAD
 				typeof(Brush),
 				typeof(SimpleCAD),
 				new FrameworkPropertyMetadata(Brushes.Blue, On_SelectionBrush_Changed));
+
+			SimpleCAD.MousePointPropertyKey = DependencyProperty.RegisterReadOnly(
+				"MousePoint",
+				typeof(Point),
+				typeof(SimpleCAD),
+				new FrameworkPropertyMetadata(new Point(0.0, 0.0), FrameworkPropertyMetadataOptions.None));
+			SimpleCAD.MousePointProperty = MousePointPropertyKey.DependencyProperty;
 		}
 
 		public SimpleCAD()
@@ -362,6 +369,15 @@ namespace simpleCAD
 				UpdatePlot();
 		}
 
+		//=============================================================================
+		public static readonly DependencyPropertyKey MousePointPropertyKey;
+		public static readonly DependencyProperty MousePointProperty;
+		public Point MousePoint
+		{
+			get { return (Point)GetValue(SimpleCAD.MousePointProperty); }
+			protected set { SetValue(SimpleCAD.MousePointPropertyKey, value); }
+		}
+
 		#endregion
 
 		#region Overrides
@@ -493,6 +509,9 @@ namespace simpleCAD
 			if (!this.IsEnabled)
 				return;
 
+			Point globalPnt = _GetGlobalPoint(e);
+			MousePoint = globalPnt;
+
 			// move plot
 			if (e.MiddleButton == MouseButtonState.Pressed)
 			{
@@ -505,8 +524,6 @@ namespace simpleCAD
 				UpdatePlot();
 				return;
 			}
-
-			Point globalPnt = _GetGlobalPoint(e);
 
 			if (m_NewGeometry != null)
 				m_NewGeometry.OnMouseMove(globalPnt);

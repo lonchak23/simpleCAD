@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -64,6 +65,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\DocumentChangesToBangeConverter.cs" />
+    <Compile Include="Converters\PointToStringConverter.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="MainWindow_ViewModel.cs" />
     <Compile Include="SaveChangesDialog.xaml.cs">
@@ -122,6 +124,10 @@
       <Project>{6b9c72bf-f8b3-4649-8d08-9c98d3518224}</Project>
       <Name>simpleCAD</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\SimpleCAD_icon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
