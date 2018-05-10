@@ -1,4 +1,5 @@
 ﻿using simpleCAD;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -92,10 +93,11 @@ namespace simpleCAD_Example
 		{
 			get
 			{
+				// For new document add 1 to current state index.
 				if (IsItNewDocument)
-					return m_states.Count;
+					return m_CurrentStateIndex + 1;
 
-				return m_states.Count - 1;
+				return m_CurrentStateIndex;
 			}
 		}
 
@@ -131,6 +133,35 @@ namespace simpleCAD_Example
 				}
 
 				NotifyPropertyChanged(() => ChangesCount);
+				NotifyPropertyChanged(() => CanUndo);
+				NotifyPropertyChanged(() => CanRedo);
+
+				if (m_DocManager != null)
+					m_DocManager.RaiseDocumentChanged();
+			}
+		}
+
+		//=============================================================================
+		public bool CanUndo
+		{
+			get
+			{
+				if (m_CurrentStateIndex > 0)
+					return true;
+
+				return false;
+			}
+		}
+
+		//=============================================================================
+		public bool CanRedo
+		{
+			get
+			{
+				if (m_CurrentStateIndex >= 0 && m_CurrentStateIndex < m_states.Count - 1)
+					return true;
+
+				return false;
 			}
 		}
 
@@ -176,6 +207,40 @@ namespace simpleCAD_Example
 
 			return true;
 		}
+
+		//=============================================================================
+		public void Undo()
+		{
+			if (!CanUndo)
+				return;
+
+			--m_CurrentStateIndex;
+
+			NotifyPropertyChanged(() => ChangesCount);
+			NotifyPropertyChanged(() => CanUndo);
+			NotifyPropertyChanged(() => CanRedo);
+			NotifyPropertyChanged(() => CurrentState);
+
+			if (m_DocManager != null)
+				m_DocManager.RaiseDocumentChanged();
+		}
+
+		//=============================================================================
+		public void Redo()
+		{
+			if (!CanRedo)
+				return;
+
+			++m_CurrentStateIndex;
+
+			NotifyPropertyChanged(() => ChangesCount);
+			NotifyPropertyChanged(() => CanUndo);
+			NotifyPropertyChanged(() => CanRedo);
+			NotifyPropertyChanged(() => CurrentState);
+
+			if (m_DocManager != null)
+				m_DocManager.RaiseDocumentChanged();
+		}
 	}
 
 	public class NewDocument : Document
@@ -186,6 +251,14 @@ namespace simpleCAD_Example
 
 	public class DocumentManager : BaseViewModel
 	{
+		//=============================================================================
+		public event EventHandler OnDocumentChanged;
+		public void RaiseDocumentChanged()
+		{
+			if (OnDocumentChanged != null)
+				OnDocumentChanged(this, null);
+		}
+
 		//=============================================================================
 		private ObservableCollection<Document> m_OpenDocuments = new ObservableCollection<Document>();
 		public ObservableCollection<Document> OpenDocuments
@@ -208,6 +281,7 @@ namespace simpleCAD_Example
 			{
 				m_CurrentDocument = value;
 				NotifyPropertyChanged(() => CurrentDocument);
+				RaiseDocumentChanged();
 			}
 		}
 

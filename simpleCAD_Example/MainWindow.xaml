@@ -48,6 +48,16 @@
 			<cadGeom:cadPolyline />
 		</x:Array>
 
+		<!-- Data template for commands -->
+		<DataTemplate DataType="{x:Type local:Command}">
+			<Button
+				ToolTip="{Binding Description}"
+				Command="{Binding .}"
+				CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}, Path=DataContext}">
+				<materialDesign:PackIcon Kind="{Binding IconKind}"/>
+			</Button>
+		</DataTemplate>
+
 	</Window.Resources>
 
 	<materialDesign:DialogHost>
@@ -57,7 +67,7 @@
 				<RowDefinition Height="auto"/>
 			</Grid.RowDefinitions>
 			
-			<!--0 SIMPLE CAD control-->
+			<!--0-->
 			<Grid Grid.Row="0">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
@@ -117,17 +127,14 @@
 									</Style>
 								</StackPanel.Resources>
 
-								<Button Click="NewButton_Click">
-									<materialDesign:PackIcon Kind="File" />
-								</Button>
-
-								<Button Click="OpenButton_Click">
-									<materialDesign:PackIcon Kind="Folder" />
-								</Button>
-
-								<Button Click="SaveButton_Click">
-									<materialDesign:PackIcon Kind="ContentSave" />
-								</Button>
+								<ItemsControl
+									ItemsSource="{Binding Commands}">
+									<ItemsControl.ItemsPanel>
+										<ItemsPanelTemplate>
+											<StackPanel Orientation="Horizontal"/>
+										</ItemsPanelTemplate>
+									</ItemsControl.ItemsPanel>
+								</ItemsControl>
 
 							</StackPanel>
 

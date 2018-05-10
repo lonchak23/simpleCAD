@@ -42,25 +42,7 @@ namespace simpleCAD_Example
 		}
 
 		//=============================================================================
-		private void SaveButton_Click(object sender, RoutedEventArgs e)
-		{
-			Document curDoc = m_VM.DocManager.CurrentDocument;
-			if (curDoc == null)
-				return;
-
-			string strFilePath = string.Empty;
-			if (curDoc.IsItNewDocument)
-			{
-				strFilePath = _GetPath();
-				if (string.IsNullOrEmpty(strFilePath))
-					return;
-			}
-
-			curDoc.Save(strFilePath);
-		}
-
-		//=============================================================================
-		private string _GetPath()
+		internal static string _GetPath()
 		{
 			string strFilePath = null;
 
@@ -79,45 +61,6 @@ namespace simpleCAD_Example
 				strFilePath = dlg.FileName;
 
 			return strFilePath;
-		}
-
-		//=============================================================================
-		private void OpenButton_Click(object sender, RoutedEventArgs e)
-		{
-			// Create OpenFileDialog
-			Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-
-			// Set filter for file extension and default file extension
-			dlg.DefaultExt = ".scad";
-			dlg.Filter = "SimpleCAD drawings (.scad)|*.scad";
-
-			// Display OpenFileDialog by calling ShowDialog method
-			Nullable<bool> result = dlg.ShowDialog();
-
-			// Get the selected file name and display in a TextBox
-			if (result == true)
-			{
-				// save or create
-				FileStream fs = new FileStream(dlg.FileName, FileMode.Open);
-				if (fs != null)
-				{
-
-					BinaryFormatter bf = new BinaryFormatter();
-					SimpleCAD_State state = (SimpleCAD_State)bf.Deserialize(fs);
-
-					Document newDoc = m_VM.DocManager.Add(dlg.FileName, state);
-					if (newDoc != null)
-						newDoc.IsSelected = true;
-				}
-			}
-		}
-
-		//=============================================================================
-		private void NewButton_Click(object sender, RoutedEventArgs e)
-		{
-			Document newDoc = m_VM.DocManager.Add(new NewDocument(m_VM.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
-			if (newDoc != null)
-				newDoc.IsSelected = true;
 		}
 
 		//=============================================================================
