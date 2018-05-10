@@ -284,6 +284,8 @@ namespace simpleCAD
 			_Cancel();
 
 			_CloneGeom();
+
+			_OnInternalCommandEnded();
 		}
 
 		//=============================================================================
