@@ -107,5 +107,8 @@ namespace simpleCAD
 				12.0,
 				1)
 		{ }
+
+		public DefaultState(SerializationInfo info, StreamingContext context)
+			: base(info, context) { }
 	}
 }

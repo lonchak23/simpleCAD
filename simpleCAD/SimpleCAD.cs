@@ -306,7 +306,26 @@ namespace simpleCAD
 			if (m_bDontUpdateState)
 				return;
 
-			this.SetState(newState);
+			// Deep clone state.
+			// If you dont clone state then SetState will set existing geometry objects as SimpleCAD children geometry.
+			//
+			// Bug:
+			// 1. Create line and save this drawing
+			// 2. Restart SimpleCAD and open the drawing.
+			// 3. Select line and move grip point 2 times, so you will have 2 changes.
+			// 4. Click Undo.
+			// 5. Click Undo again - the drawing doesnt return in original state.
+			// Instead its the last state - when grip point was moved the second time.
+			//
+			// Its result of using the same line instance in SimpleCAD as in Document.States collection.
+			// When grip was moved changes are applied to Document.States collection.
+			// Correct way - make copy of State and use it as a new state. So SimpleCAD and Document.States will
+			// have independent copies of the same state.
+			SimpleCAD_State clonedState = null;
+			if(newState != null)
+				clonedState = Utils.DeepClone<SimpleCAD_State>(newState);
+
+			this.SetState(clonedState);
 		}
 
 		//=============================================================================
