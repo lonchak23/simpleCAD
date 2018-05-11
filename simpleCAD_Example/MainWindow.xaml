@@ -73,6 +73,7 @@
 					<RowDefinition Height="*"/>
 				</Grid.RowDefinitions>
 
+				<!--SimpleCAD control-->
 				<sCAD:SimpleCAD
 					x:Name="sCAD"
 					
