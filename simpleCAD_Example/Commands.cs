@@ -64,8 +64,7 @@ namespace simpleCAD_Example
 			MainWindow_ViewModel vm = parameter as MainWindow_ViewModel;
 			if(vm != null)
 			{
-				//Document newDoc = vm.DocManager.Add(new NewDocument(vm.DocManager, sCAD.ActualWidth, sCAD.ActualHeight));
-				Document newDoc = vm.DocManager.Add(new NewDocument(vm.DocManager, 0, 0));
+				Document newDoc = vm.DocManager.Add(new NewDocument(vm.DocManager, vm.SimpleCAD_ActualWidth, vm.SimpleCAD_ActualHeight));
 				if (newDoc != null)
 					newDoc.IsSelected = true;
 			}

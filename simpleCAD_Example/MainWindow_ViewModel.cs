@@ -6,9 +6,36 @@ namespace simpleCAD_Example
 {
 	public class MainWindow_ViewModel : BaseViewModel
 	{
-		public MainWindow_ViewModel()
+		// Link to main window. For SimpleCAD control sizes in create new document command.
+		MainWindow m_MainWindow = null;
+		public MainWindow_ViewModel(MainWindow mw)
 		{
+			m_MainWindow = mw;
 			m_DocManager.OnDocumentChanged += M_DocManager_OnDocumentChanged;
+		}
+
+		//=============================================================================
+		public double SimpleCAD_ActualHeight
+		{
+			get
+			{
+				if (m_MainWindow != null)
+					return m_MainWindow.SimpleCAD_ActualHeight;
+
+				return 0.0;
+			}
+		}
+
+		//=============================================================================
+		public double SimpleCAD_ActualWidth
+		{
+			get
+			{
+				if (m_MainWindow != null)
+					return m_MainWindow.SimpleCAD_ActualWidth;
+
+				return 0.0;
+			}
 		}
 
 		//=============================================================================

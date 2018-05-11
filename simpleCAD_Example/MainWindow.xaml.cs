@@ -14,12 +14,13 @@ namespace simpleCAD_Example
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private MainWindow_ViewModel m_VM = new MainWindow_ViewModel();
+		private MainWindow_ViewModel m_VM = null;
 
 		public MainWindow()
 		{
 			InitializeComponent();
 
+			m_VM = new MainWindow_ViewModel(this);
 			DataContext = m_VM;
 
 			this.KeyDown += MainWindow_KeyDown;
@@ -28,6 +29,11 @@ namespace simpleCAD_Example
 			// Why loaded? - need SimpleCAD control ActualWidth and ActualHeight for correct offset
 			this.Loaded += MainWindow_Loaded;
 		}
+
+		//=============================================================================
+		public double SimpleCAD_ActualHeight { get { return sCAD.ActualHeight; } }
+		//=============================================================================
+		public double SimpleCAD_ActualWidth { get { return sCAD.ActualWidth; } }
 
 		//=============================================================================
 		private void MainWindow_Loaded(object sender, RoutedEventArgs e)
