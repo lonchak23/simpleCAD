@@ -50,6 +50,30 @@
 
 		<!-- Data template for commands -->
 		<DataTemplate DataType="{x:Type local:Command}">
+			
+			<DataTemplate.Resources>
+				<Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+					<Setter Property="Background" Value="Transparent"/>
+					<Setter Property="BorderBrush" Value="Transparent"/>
+					<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
+
+					<Setter Property="Margin" Value="3, 0, 3, 0"/>
+					<Setter Property="Padding" Value="0"/>
+
+					<Style.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="Foreground" Value="{DynamicResource SecondaryAccentBrush}"/>
+						</Trigger>
+					</Style.Triggers>
+					
+				</Style>
+
+				<Style TargetType="{x:Type materialDesign:PackIcon}" BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
+					<Setter Property="Width" Value="26"/>
+					<Setter Property="Height" Value="26"/>
+				</Style>
+			</DataTemplate.Resources>
+			
 			<Button
 				ToolTip="{Binding Description}"
 				Command="{Binding .}"
@@ -112,22 +136,6 @@
 								Margin="8, 8, 8, 8"
 								Orientation="Horizontal">
 
-								<StackPanel.Resources>
-									<Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-										<Setter Property="Background" Value="Transparent"/>
-										<Setter Property="BorderBrush" Value="Transparent"/>
-										<Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidBrush}"/>
-
-										<Setter Property="Margin" Value="3, 0, 3, 0"/>
-										<Setter Property="Padding" Value="0"/>
-									</Style>
-
-									<Style TargetType="{x:Type materialDesign:PackIcon}" BasedOn="{StaticResource {x:Type materialDesign:PackIcon}}">
-										<Setter Property="Width" Value="26"/>
-										<Setter Property="Height" Value="26"/>
-									</Style>
-								</StackPanel.Resources>
-
 								<ItemsControl
 									ItemsSource="{Binding Commands}">
 									<ItemsControl.ItemsPanel>
@@ -141,13 +149,14 @@
 
 							<ListBox
 								Grid.Row="1"
+								Margin="8, 0, 8, 0"
 								SelectedIndex="0"
 								SelectedItem="{Binding DocManager.CurrentDocument, Mode=TwoWay}"
 								ItemsSource="{Binding DocManager.OpenDocuments, Mode=OneWay}">
 
 								<ListBox.ItemsPanel>
 									<ItemsPanelTemplate>
-										<StackPanel Orientation="Horizontal" />
+										<local_controls:CompressPanel Orientation="Horizontal"/>
 									</ItemsPanelTemplate>
 								</ListBox.ItemsPanel>
 
@@ -186,7 +195,7 @@
 											</Grid.RowDefinitions>
 
 											<Grid.ColumnDefinitions>
-												<ColumnDefinition Width="auto"/>
+												<ColumnDefinition Width="*"/>
 												<ColumnDefinition Width="auto"/>
 											</Grid.ColumnDefinitions>
 

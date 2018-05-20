@@ -65,6 +65,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Commands.cs" />
+    <Compile Include="Controls\CompressPanel.cs" />
     <Compile Include="Converters\DocumentChangesToBangeConverter.cs" />
     <Compile Include="Converters\PointToStringConverter.cs" />
     <Compile Include="Document.cs" />
